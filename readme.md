@@ -108,3 +108,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - The Rich library for the terminal UI
 - EnergyPlus for building energy modeling
+
+## References
+- https://unmethours.com/question/38548/simultaneously-run-a-number-of-independent-energyplus-simulations-on-multiple-cores-on-linux-via-a-script/
+- https://bigladdersoftware.com/epx/docs/8-4/tips-and-tricks-using-energyplus/run-energyplus-in-parallel.html
+- https://unmethours.com/question/4668/script-for-multiple-simulations/
+- https://unmethours.com/question/31609/how-to-run-energyplus-in-multi-core-clusterlinux/
+- https://github.com/santoshphilip/eppy/blob/55410ff7c11722f35bc4331ff5e00a0b86f787e1/eppy/runner/run_functions.py#L141
