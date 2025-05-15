@@ -662,7 +662,6 @@ def update_process(update_queue, status_tracker):
             message_type = message[0]
             
             if message_type == "INFO":
-                # Just print the message
                 print(message[1])
             
             elif message_type == "UPDATE":
@@ -672,12 +671,9 @@ def update_process(update_queue, status_tracker):
                 status_tracker.update_simulation(idf_name, **updates)
             
             elif message_type == "LOG":
-                # Add log message
                 idf_name = message[1]
                 log_message = message[2]
                 status_tracker.add_log(idf_name, log_message)
-            
-            # Other message types handled by the calling function
             
         except queue.Empty:
             continue
@@ -749,7 +745,6 @@ def run_simulations(eplus_path=DEFAULT_EPLUS_PATH, max_workers=None, csv_output=
             f"{seconds:02d}"         # Seconds
         ]
         
-        # Write to the CSV file
         with open(csv_file, 'a', newline='') as f:
             writer = csv.writer(f)
             
@@ -759,8 +754,7 @@ def run_simulations(eplus_path=DEFAULT_EPLUS_PATH, max_workers=None, csv_output=
                     "#", "Job_ID", "WeatherFile", "ModelFile", "Progress(1-Completed/0-Failed)", 
                     "Message", "Warnings", "Errors", "Hours", "Minutes", "Seconds"
                 ])
-            
-            # Write the data row
+
             writer.writerow(row)
             
         print(f"Added to CSV: {idf_name} - Status: {info['status']} - Progress: {progress}")
@@ -914,7 +908,6 @@ def run_simulations(eplus_path=DEFAULT_EPLUS_PATH, max_workers=None, csv_output=
                                     row_counter += 1
                         
                         elif message_type == "LOG":
-                            # Add log message
                             idf_name = message[1]
                             log_message = message[2]
                             status_tracker.add_log(idf_name, log_message)
@@ -1248,7 +1241,6 @@ def main():
     
     args = parser.parse_args()
     
-    # Run the simulations with UI
     run_simulations(args.eplus, args.max_workers, args.csv)
 
 if __name__ == "__main__":
