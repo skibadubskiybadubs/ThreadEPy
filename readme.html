@@ -262,13 +262,11 @@
 <h3>Prerequisites</h3>
 <ul><li>Python 3.8 or higher</li></ul><ul><li>EnergyPlus 23.2.0 or higher (must be installed separately)</li></ul>
 <h3>Setup</h3>
-<ol><li>Clone this repository:</li></ol>
-<p>   <code></code><code>bash    git clone https://github.com/skibadubskiybadubs/energyplus_multiprocessing.git    cd energyplus-parallel    </code><code></code></p>
 <ol><li>Install the required dependencies:</li></ol>
-<p>   <code></code><code>bash    pip install rich psutil    </code><code></code></p>
+<p>   <code></code><code class="language-bash">pip install rich psutil</code><code></code></p>
 <h2>Usage</h2>
 <ol><li>Place your IDF files and weather file (EPW) in the same directory as the script.</li></ol><ol><li>Run the script:</li></ol>
-<p>   <code></code><code>bash    python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0"    </code><code></code></p>
+<p>   <code></code><code class="language-bash">    python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0"    </code><code></code></p>
 <h3>Command-line Arguments</h3>
 <ul><li><code>--eplus</code>: Path to the EnergyPlus installation directory (required)</li></ul><ul><li><code>--max-workers</code>: Maximum number of parallel simulations (default: number of logical processors - 1)</li></ul><ul><li><code>--csv</code>: Output CSV file name (default: "simulation_results.csv")</li></ul>
 <h3>Example</h3>
@@ -283,8 +281,6 @@
 <h2>Troubleshooting</h2>
 <h3>Common Issues</h3>
 <ol><li><strong>Error: EnergyPlus executable not found</strong></li><ul><li>Ensure the path to EnergyPlus is correct</li></ul><ul><li>Verify EnergyPlus is properly installed</li></ul></ol><ol><li><strong>Simulations start but fail immediately</strong></li><ul><li>Check that your IDF files are valid</li></ul><ul><li>Verify that the weather file is in the same directory</li></ul></ol><ol><li><strong>Script crashes with memory errors</strong></li><ul><li>Reduce the number of parallel simulations using the <code>--max-workers</code> option</li></ul></ol>
-<h2>License</h2>
-<p>This project is licensed under the MIT License - see the LICENSE file for details.</p>
 <h2>Acknowledgements</h2>
 <ul><li>The Rich library for the terminal UI</li></ul><ul><li>EnergyPlus for building energy modeling</li></ul>
 <h2>References</h2>
