@@ -6,6 +6,8 @@ A Python utility for running multiple EnergyPlus simulations in parallel with re
 
 This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
 
+![GUI](https://github.com/user-attachments/assets/1e7d7124-0c05-49bc-9389-49997f0e72c4)
+
 ![EnergyPlus Parallel Simulations](https://raw.githubusercontent.com/skibadubskiybadubs/energyplus_multiprocessing/main/img.png)
 
 ## Features
@@ -42,6 +44,13 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 1. Place your IDF files and weather file (EPW) in the same directory as the script.
 
 2. Run the script:
+
+   There are several ways to run the script. You can enable the built-in GUI by simply calling the script without any additional arguments:
+   ```bash
+   python energyplus_parallel.py
+   ```
+
+   Otherwise, you can skip the built-in GUI to immediately run the script. In this case, all the .idf and .epw files must be located in the root folder along with the script:
    ```bash
    python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0"
    ```
