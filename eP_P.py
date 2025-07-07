@@ -27,6 +27,10 @@ You can also specify the weather file to use:
 python energyplus_parallel.py --eplus_path "C:\EnergyPlusV23-2-0" --weather_file "USA_CA_San.Francisco.Intl.AP.724940_TMY3.epw"
 """
 
+VERSION = "1.1.0"
+APP_NAME = "EnergyPlus Parallel Runner"
+DEFAULT_EPLUS_PATH = r"C:\EnergyPlusV23-2-0"
+
 import os
 import re
 import glob
@@ -35,6 +39,7 @@ import tempfile
 import subprocess
 import time
 import sys
+import os
 import argparse
 import threading
 import queue
@@ -42,12 +47,13 @@ import multiprocessing
 from multiprocessing import Manager, Process, cpu_count
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-import atexit
-import signal
-import os
-import sys
+import json
+import csv
+import ctypes
+from ctypes import wintypes
+import traceback
 
-# Check if dependencies are installed, if not, install them
+# Check if dependencies are installed, if not, attempt to install them
 def check_and_install_dependencies():
     try:
         import rich
@@ -58,16 +64,14 @@ def check_and_install_dependencies():
         print("Dependencies installed successfully.")
 check_and_install_dependencies()
 
-# Now import the dependencies
 from rich.live import Live
 from rich.table import Table
 from rich.panel import Panel
 from rich.layout import Layout
 from rich import box
 import psutil
-
-# Change this to the path of your EnergyPlus installation
-DEFAULT_EPLUS_PATH = r"C:\EnergyPlusV23-2-0"
+from rich.columns import Columns
+from rich.text import Text
 
 class SimulationStatus:
     """Class to track the status of simulations"""
@@ -235,8 +239,6 @@ class SimulationStatus:
     
     def get_logs_panel(self):
         """Generate a panel with simulation logs, focusing on active simulations"""
-        from rich.columns import Columns
-        from rich.text import Text
         
         panels = []
         with self._lock:
@@ -648,16 +650,89 @@ def update_process(update_queue, status_tracker):
         except Exception as e:
             print(f"Error in update process: {str(e)}")
 
+def allocate_console():
+    """Allocate a console window for the current process (Windows only)"""
+    try:
+        # Allocate console
+        kernel32 = ctypes.windll.kernel32
+        kernel32.AllocConsole()
+        
+        # Redirect stdout, stderr to console
+        sys.stdout = open('CONOUT$', 'w')
+        sys.stderr = open('CONOUT$', 'w')
+        sys.stdin = open('CONIN$', 'r')
+        
+        # Set console title
+        kernel32.SetConsoleTitleW(f"{APP_NAME} - by Misha Brovin v{VERSION}")
+        
+        return True
+    except Exception as e:
+        print(f"Failed to allocate console: {e}")
+        return False
+
+def save_config_to_temp(config):
+    """Save configuration to a temporary file"""
+    temp_file = tempfile.mktemp(suffix='.json', prefix='epp_config_')
+    with open(temp_file, 'w') as f:
+        json.dump(config, f)
+    return temp_file
+
+def load_config_from_temp(config_file):
+    """Load configuration from temporary file"""
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+        os.unlink(config_file)  # Delete temp file
+        return config
+    except Exception as e:
+        print(f"Error loading config: {e}")
+        return None
+
+def resolve_csv_path(csv_output, idf_files):
+    """
+    Resolve the CSV output path based on whether it's a filename or full path.
+    If it's just a filename, create it in the same folder as the IDF files.
+    
+    Args:
+        csv_output (str): CSV output filename or path
+        idf_files (list): List of IDF file paths
+    
+    Returns:
+        str: Full path to the CSV file
+    """
+    if not csv_output:
+        csv_output = "simulation_results.csv"
+    
+    # Check if csv_output is just a filename (no path separators)
+    if os.path.dirname(csv_output) == "":
+        # It's just a filename, so create it in the IDF folder
+        if idf_files:
+            # Get the directory of the first IDF file
+            idf_folder = os.path.dirname(os.path.abspath(idf_files[0]))
+            csv_path = os.path.join(idf_folder, csv_output)
+        else:
+            # Fallback to current directory if no IDF files
+            csv_path = csv_output
+    else:
+        # It's a full path, use as-is
+        csv_path = os.path.abspath(csv_output)
+    
+    return csv_path
+
 class EnergyPlusGUI:
     """GUI for selecting simulation parameters"""
     
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("EnergyPlus Parallel Simulation Setup")
-        self.root.geometry("800x600")
+        self.root.title(f"{APP_NAME} v{VERSION}")
+        self.root.geometry("600x600")
 
         # End Process on close
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        self.setup_dark_theme()
         
         # Variables to store user selections
         self.idf_folder = tk.StringVar()
@@ -675,68 +750,170 @@ class EnergyPlusGUI:
         self.result = None
         
         self.create_widgets()
+
+    def on_window_resize(self, event):
+        """Handle window resize events for responsive design"""
+        if event.widget == self.root:
+            # Update canvas scroll region when window is resized
+            self.root.after_idle(lambda: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+    def setup_dark_theme(self):
+        """Configure dark theme for the application"""
+        # Dark theme colors
+        self.colors = {
+            'bg': '#2b2b2b',           # Dark background
+            'fg': '#ffffff',           # White text
+            'select_bg': '#404040',    # Selection background
+            'select_fg': '#ffffff',    # Selection text
+            'entry_bg': '#f0f0f0',     # Entry background - LIGHTER GRAY
+            'entry_fg': '#000000',     # Entry text - BLACK
+            'button_bg': '#505050',    # Button background
+            'button_fg': '#ffffff',    # Button text
+            'button_active': '#606060', # Button active
+            'accent': '#0d7377',       # Accent color (teal)
+            'banner_bg': '#1a1a1a',    # Banner background
+            'banner_fg': '#00d4aa'     # Banner text (bright teal)
+        }
         
+        # Calculate responsive font sizes based on window size
+        base_width = 900
+        current_width = self.root.winfo_width() if self.root.winfo_width() > 1 else base_width
+        scale_factor = current_width / base_width
+        
+        banner_font_size = max(16, int(20 * scale_factor))
+        subtitle_font_size = max(10, int(12 * scale_factor))
+        version_font_size = max(8, int(10 * scale_factor))
+        
+        # Configure root window
+        self.root.configure(bg=self.colors['bg'])
+        
+        # Configure ttk style
+        self.style = ttk.Style()
+        self.style.theme_use('clam')
+        
+        # Configure ttk styles for dark theme with responsive fonts
+        self.style.configure('Dark.TFrame', background=self.colors['bg'])
+        self.style.configure('Dark.TLabel', background=self.colors['bg'], foreground=self.colors['fg'])
+        self.style.configure('Dark.TButton', background=self.colors['button_bg'], foreground=self.colors['button_fg'])
+        self.style.configure('Dark.TEntry', background=self.colors['entry_bg'], foreground=self.colors['entry_fg'])
+        self.style.configure('Dark.TCheckbutton', background=self.colors['bg'], foreground=self.colors['fg'])
+        self.style.configure('Dark.TSpinbox', background=self.colors['entry_bg'], foreground=self.colors['entry_fg'])
+        
+        # Configure LabelFrame
+        self.style.configure('Dark.TLabelframe', background=self.colors['bg'], foreground=self.colors['fg'])
+        self.style.configure('Dark.TLabelframe.Label', background=self.colors['bg'], foreground=self.colors['fg'])
+        
+        # Map active states
+        self.style.map('Dark.TButton',
+                    background=[('active', self.colors['button_active']),
+                                ('pressed', self.colors['accent'])])
+        
+        # Banner styles with responsive fonts
+        self.style.configure('Banner.TFrame', background=self.colors['banner_bg'])
+        self.style.configure('Banner.TLabel', background=self.colors['banner_bg'], foreground=self.colors['banner_fg'], 
+                            font=('Calibri', banner_font_size, 'bold'))
+        self.style.configure('Version.TLabel', background=self.colors['banner_bg'], foreground=self.colors['fg'], 
+                            font=('Calibri', version_font_size))
+        self.style.configure('Subtitle.TLabel', background=self.colors['banner_bg'], foreground=self.colors['fg'], 
+                            font=('Calibri', subtitle_font_size, 'italic'))
+
     def create_widgets(self):
-        """Create the GUI widgets"""
-        main_frame = ttk.Frame(self.root, padding="10")
+        """Create the GUI widgets with responsive dark theme"""
+        main_frame = ttk.Frame(self.root, style='Dark.TFrame')
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(1, weight=1)  # Content area gets most space
         
-        # Configure grid weights
-        self.root.columnconfigure(0, weight=1)
-        self.root.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=1)
+        banner_frame = ttk.Frame(main_frame, style='Banner.TFrame')
+        banner_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 2))
+        banner_frame.columnconfigure(0, weight=1)
         
-        row = 0
+        padding_y = "1.5m"
+        padding_x = "2m"
         
-        # Title
-        title_label = ttk.Label(main_frame, text="EnergyPlus Parallel Simulation Setup", 
-                               font=('Arial', 16, 'bold'))
-        title_label.grid(row=row, column=0, columnspan=3, pady=(0, 20))
-        row += 1
+        banner_content = ttk.Frame(banner_frame, style='Banner.TFrame')
+        banner_content.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=padding_x, pady=padding_y)
+        banner_content.columnconfigure(0, weight=1)
+        
+        title_label = ttk.Label(banner_content, text=APP_NAME, style='Banner.TLabel')
+        title_label.grid(row=0, column=0, pady=(0, "0.5m"))
+
+        github_url = "https://github.com/skibadubskiybadubs/energyplus_multiprocessing"
+        def open_github_link(event):
+            os.startfile(github_url)
+        subtitle_label = tk.Label(
+            banner_content,
+            text="by Misha Brovin",
+            fg="#00d4aa",
+            bg=self.colors['banner_bg'],
+            cursor="hand2",
+            font=('Calibri', 12)
+        )
+        subtitle_label.grid(row=1, column=0, pady=(0, "0.3m"))
+        subtitle_label.bind("<Button-1>", open_github_link)
+        #subtitle_label = ttk.Label(banner_content, text="Parallel EnergyPlus Simulation Tool", style='Subtitle.TLabel')
+        #subtitle_label.grid(row=1, column=0, pady=(0, "0.3m"))
+        
+        version_label = ttk.Label(banner_content, text=f"Version {VERSION}", style='Version.TLabel')
+        version_label.grid(row=2, column=0)
+        
+        content_frame = ttk.Frame(main_frame, style='Dark.TFrame')
+        content_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx="1.5m", pady="1m")
+        content_frame.columnconfigure(1, weight=1)
+        content_frame.rowconfigure(4, weight=1)  # Files frame gets most space
+
+        row_pady = "0.8m"
         
         # IDF Folder Selection
-        ttk.Label(main_frame, text="IDF Files Folder:").grid(row=row, column=0, sticky=tk.W, pady=5)
-        ttk.Entry(main_frame, textvariable=self.idf_folder, width=50).grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
-        ttk.Button(main_frame, text="Browse", command=self.select_idf_folder).grid(row=row, column=2, pady=5)
-        row += 1
+        ttk.Label(content_frame, text="IDF Files Folder:", style='Dark.TLabel').grid(
+            row=0, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+        folder_entry = ttk.Entry(content_frame, textvariable=self.idf_folder, style='Dark.TEntry')
+        folder_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
+        ttk.Button(content_frame, text="Browse", command=self.select_idf_folder, style='Dark.TButton').grid(
+            row=0, column=2, pady=row_pady)
         
         # Weather File Selection
-        ttk.Label(main_frame, text="Weather File (.epw):").grid(row=row, column=0, sticky=tk.W, pady=5)
-        ttk.Entry(main_frame, textvariable=self.epw_file, width=50).grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
-        ttk.Button(main_frame, text="Browse", command=self.select_epw_file).grid(row=row, column=2, pady=5)
-        row += 1
+        ttk.Label(content_frame, text="Weather File (.epw):", style='Dark.TLabel').grid(
+            row=1, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+        weather_entry = ttk.Entry(content_frame, textvariable=self.epw_file, style='Dark.TEntry')
+        weather_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
+        ttk.Button(content_frame, text="Browse", command=self.select_epw_file, style='Dark.TButton').grid(
+            row=1, column=2, pady=row_pady)
         
         # EnergyPlus Folder Selection
-        ttk.Label(main_frame, text="EnergyPlus Folder:").grid(row=row, column=0, sticky=tk.W, pady=5)
-        ttk.Entry(main_frame, textvariable=self.eplus_folder, width=50).grid(row=row, column=1, sticky=(tk.W, tk.E), pady=5)
-        ttk.Button(main_frame, text="Browse", command=self.select_eplus_folder).grid(row=row, column=2, pady=5)
-        row += 1
+        ttk.Label(content_frame, text="EnergyPlus Folder:", style='Dark.TLabel').grid(
+            row=2, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+        eplus_entry = ttk.Entry(content_frame, textvariable=self.eplus_folder, style='Dark.TEntry')
+        eplus_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
+        ttk.Button(content_frame, text="Browse", command=self.select_eplus_folder, style='Dark.TButton').grid(
+            row=2, column=2, pady=row_pady)
         
         # Settings frame
-        settings_frame = ttk.LabelFrame(main_frame, text="Simulation Settings", padding="5")
-        settings_frame.grid(row=row, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=10)
-        settings_frame.columnconfigure(1, weight=1)
-        row += 1
+        settings_frame = ttk.LabelFrame(content_frame, text="Simulation Settings", style='Dark.TLabelframe')
+        settings_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady="1m")
+        settings_frame.columnconfigure(2, weight=1)
         
-        # Max Workers
-        ttk.Label(settings_frame, text="Max Parallel Workers:").grid(row=0, column=0, sticky=tk.W, pady=2)
-        ttk.Spinbox(settings_frame, from_=1, to=cpu_count(), textvariable=self.max_workers, width=10).grid(row=0, column=1, sticky=tk.W, pady=2)
+        # Compact settings layout
+        ttk.Label(settings_frame, text="Max Workers:", style='Dark.TLabel').grid(
+            row=0, column=0, sticky=tk.W, padx="1m", pady="0.5m")
+        ttk.Spinbox(settings_frame, from_=1, to=cpu_count(), textvariable=self.max_workers, 
+                    width=5, style='Dark.TSpinbox').grid(row=0, column=1, padx="0.5m", pady="0.5m")
         
-        # CSV Output
-        ttk.Label(settings_frame, text="CSV Output File:").grid(row=1, column=0, sticky=tk.W, pady=2)
-        ttk.Entry(settings_frame, textvariable=self.csv_output, width=30).grid(row=1, column=1, sticky=(tk.W, tk.E), pady=2)
+        ttk.Label(settings_frame, text="CSV Output:", style='Dark.TLabel').grid(
+            row=0, column=2, sticky=tk.W, padx="1m", pady="0.5m")
+        csv_entry = ttk.Entry(settings_frame, textvariable=self.csv_output, style='Dark.TEntry')
+        csv_entry.grid(row=0, column=3, sticky=(tk.W, tk.E), padx=("0.5m", "1m"), pady="0.5m")
         
-        # IDF Files Selection Frame
-        self.files_frame = ttk.LabelFrame(main_frame, text="Select IDF Files to Run", padding="5")
-        self.files_frame.grid(row=row, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=10)
+        # IDF Files Selection Frame 
+        self.files_frame = ttk.LabelFrame(content_frame, text="Select IDF Files to Run", style='Dark.TLabelframe')
+        self.files_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady="1m")
         self.files_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(row, weight=1)
-        row += 1
+        self.files_frame.rowconfigure(0, weight=1)
         
-        # Create scrollable frame for checkboxes
-        self.canvas = tk.Canvas(self.files_frame)
+        # Scrollable frame setup
+        self.canvas = tk.Canvas(self.files_frame, bg=self.colors['bg'], highlightthickness=0)
         self.scrollbar = ttk.Scrollbar(self.files_frame, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas)
+        self.scrollable_frame = ttk.Frame(self.canvas, style='Dark.TFrame')
         
         self.scrollable_frame.bind(
             "<Configure>",
@@ -746,27 +923,32 @@ class EnergyPlusGUI:
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
         
-        self.canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        self.scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        self.canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx="1m", pady="1m")
+        self.scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S), padx=(0, "0.5m"), pady="1m")
         
-        self.files_frame.rowconfigure(0, weight=1)
-        self.files_frame.columnconfigure(0, weight=1)
+        # BUTTONS
+        button_frame = ttk.Frame(self.files_frame, style='Dark.TFrame')
+        button_frame.grid(row=1, column=0, columnspan=2, pady="0.5m")
+        ttk.Button(button_frame, text="Select All", command=self.select_all_files, style='Dark.TButton').pack(
+            side=tk.LEFT, padx="0.5m")
+        ttk.Button(button_frame, text="Select None", command=self.select_no_files, style='Dark.TButton').pack(
+            side=tk.LEFT, padx="0.5m")
         
-        # Select All/None buttons
-        button_frame = ttk.Frame(self.files_frame)
-        button_frame.grid(row=1, column=0, columnspan=2, pady=5)
-        ttk.Button(button_frame, text="Select All", command=self.select_all_files).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Select None", command=self.select_no_files).pack(side=tk.LEFT, padx=5)
+
+        action_frame = ttk.Frame(content_frame, style='Dark.TFrame')
+        action_frame.grid(row=5, column=0, columnspan=3, pady="1m")
         
-        # Action Buttons
-        action_frame = ttk.Frame(main_frame)
-        action_frame.grid(row=row, column=0, columnspan=3, pady=20)
+        start_btn = ttk.Button(action_frame, text="Start Simulations", command=self.start_simulations, style='Dark.TButton')
+        start_btn.pack(side=tk.LEFT, padx="1m")
         
-        ttk.Button(action_frame, text="Start Simulations", command=self.start_simulations).pack(side=tk.LEFT, padx=10)
-        ttk.Button(action_frame, text="Cancel", command=self.cancel).pack(side=tk.LEFT, padx=10)
+        cancel_btn = ttk.Button(action_frame, text="Cancel", command=self.cancel, style='Dark.TButton')
+        cancel_btn.pack(side=tk.LEFT, padx="0.5m")
         
-        # Set default values
+        # Default vals
         self.eplus_folder.set(DEFAULT_EPLUS_PATH)
+        
+        # Bind window resize event for dynamic updates
+        self.root.bind('<Configure>', self.on_window_resize)
         
     def select_idf_folder(self):
         """Select folder containing IDF files"""
@@ -804,17 +986,17 @@ class EnergyPlusGUI:
         
         # Find IDF files
         self.idf_files = glob.glob(os.path.join(folder, "*.idf"))
-        
         if not self.idf_files:
-            ttk.Label(self.scrollable_frame, text="No IDF files found in selected folder").pack(pady=10)
+            no_files_label = ttk.Label(self.scrollable_frame, text="No IDF files found in selected folder", style='Dark.TLabel')
+            no_files_label.pack(pady="1m")
             return
             
-        # Create checkboxes for each IDF file
+        # Create checkboxes for each IDF file with responsive spacing
         for i, idf_file in enumerate(self.idf_files):
             var = tk.BooleanVar(value=True)  # Default to selected
             filename = os.path.basename(idf_file)
-            checkbox = ttk.Checkbutton(self.scrollable_frame, text=filename, variable=var)
-            checkbox.pack(anchor=tk.W, pady=2)
+            checkbox = ttk.Checkbutton(self.scrollable_frame, text=filename, variable=var, style='Dark.TCheckbutton')
+            checkbox.pack(anchor=tk.W, pady="0.3m", padx="1m", fill=tk.X)
             self.idf_checkboxes[idf_file] = var
             
     def check_for_epw_file(self):
@@ -879,8 +1061,8 @@ class EnergyPlusGUI:
         if not self.validate_inputs():
             return
             
-        # Create result dictionary
-        self.result = {
+        # Create configuration dictionary
+        config = {
             'idf_files': self.selected_files,
             'epw_file': self.epw_file.get(),
             'eplus_path': self.eplus_folder.get(),
@@ -888,16 +1070,35 @@ class EnergyPlusGUI:
             'csv_output': self.csv_output.get()
         }
         
-        # Close the GUI
+        # Save config to temporary file
+        config_file = save_config_to_temp(config)
+        
+        # Close GUI
         self.root.quit()
         self.root.destroy()
+        
+        # Launch new process with console for simulations
+        try:
+            # Get the path to the current script
+            script_path = os.path.abspath(__file__)
+            
+            # Launch new process with console and config file
+            subprocess.Popen([
+                sys.executable, script_path, 
+                '--run-simulations', config_file
+            ], creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0)
+            
+        except Exception as e:
+            print(f"Error launching simulation process: {e}")
+        
+        # Exit current process
+        sys.exit(0)
         
     def cancel(self):
         """Cancel and close the GUI"""
         self.result = None
         self.root.quit()
         self.root.destroy()
-        os._exit(0)
         sys.exit(0)
     
     def on_closing(self):
@@ -905,7 +1106,6 @@ class EnergyPlusGUI:
         self.result = None
         self.root.quit()
         self.root.destroy()
-        os._exit(0)
         sys.exit(0)
         
     def show(self):
@@ -941,8 +1141,6 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
             row_number (int): Row number for this simulation
             csv_file (str): Path to the CSV file
         """
-        import csv
-        import os
         
         # Check if CSV file exists, create with header if not
         file_exists = os.path.isfile(csv_file)
@@ -963,7 +1161,6 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
             runtime = info['end_time'] - info['start_time']
         else:
             runtime = 0
-        
         hours = int(runtime // 3600)
         minutes = int((runtime % 3600) // 60)
         seconds = int(runtime % 60)
@@ -1005,9 +1202,11 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
         print("Invalid weather file provided")
         return
     
+    # Resolve the CSV output path
+    csv_output = resolve_csv_path(csv_output, idf_files)
+    
     # Initialize CSV file with headers
     if csv_output:
-        import csv
         with open(csv_output, 'w', newline='') as f:
             writer = csv.writer(f)
             writer.writerow([
@@ -1069,9 +1268,8 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
     completed_count = 0  # Count of completed simulations
     total = len(idf_files)  # Total number of simulations
     last_check_time = time.time()  # Time of last process check
-    
-    # For CSV row numbering
-    row_counter = 0
+
+    row_counter = 0 # For CSV row numbering
     
     # Track which simulations have been written to CSV
     csv_written = set()
@@ -1107,15 +1305,12 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
                         if message == "DONE":
                             break
                         
-                        # Process different message types
                         message_type = message[0]
                         
                         if message_type == "INFO":
-                            # Just print the message
                             print(message[1])
                         
                         elif message_type == "UPDATE":
-                            # Update the status tracker
                             idf_name = message[1]
                             updates = message[2]
                             
@@ -1406,7 +1601,6 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
             process_info['process'].terminate()
     except Exception as e:
         print(f"\nError in main loop: {str(e)}")
-        import traceback
         traceback.print_exc()
     finally:
         # Clean up processes
@@ -1431,7 +1625,7 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
                     add_simulation_to_csv(idf_file, weather_file, info, len(csv_written), csv_output)
                     csv_written.add(idf_name)
     
-    # Print final summary
+    # Final summary
     print("\nAll simulations completed!")
     print("Output files have been saved to the original directory.")
     
@@ -1464,6 +1658,9 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
             print("  No output files found")
             
     print(f"\nResults CSV has been saved to: {csv_output} ({len(csv_written)} simulations recorded)")
+    
+    # Keep console open for user to see results
+    input("\nPress Enter to exit...")
 
 def cleanup_and_exit():
     """Cleanup function to ensure process termination"""
@@ -1489,38 +1686,41 @@ def main():
     parser.add_argument('--max-workers', type=int, default=None, help='Maximum number of parallel simulations')
     parser.add_argument('--csv', type=str, default="simulation_results.csv", help='Output CSV file for simulation results')
     parser.add_argument('--weather', type=str, default=None, help='Weather file to use')
+    parser.add_argument('--run-simulations', type=str, default=None, help='Run simulations with config file (internal use)')
     
     args = parser.parse_args()
     
+    # Check if this is a simulation run (launched from GUI)
+    if args.run_simulations:
+        print(f"{APP_NAME} - Simulation Console")
+        print("=" * 50)
+        
+        # Load configuration from file
+        config = load_config_from_temp(args.run_simulations)
+        if not config:
+            print("Error: Could not load simulation configuration")
+            input("Press Enter to exit...")
+            return
+        
+        # Run simulations with loaded config
+        run_simulations(
+            idf_files=config['idf_files'],
+            weather_file=config['epw_file'],
+            eplus_path=config['eplus_path'],
+            max_workers=config['max_workers'],
+            csv_output=config['csv_output']
+        )
+        return
+    
     # Check if any command line arguments were provided (excluding defaults)
     # If no arguments provided, launch GUI mode
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 1: # GUI mode
         print("No command line arguments provided. Starting GUI mode...")
         
         # Show GUI to get user selections
-        selections = show_gui()
+        show_gui()
         
-        if selections is None:
-            print("User cancelled. Exiting.")
-            cleanup_and_exit()
-        
-        print("Starting simulations with selected parameters...")
-        print(f"IDF Files: {len(selections['idf_files'])} files")
-        print(f"Weather File: {os.path.basename(selections['epw_file'])}")
-        print(f"EnergyPlus Path: {selections['eplus_path']}")
-        print(f"Max Workers: {selections['max_workers']}")
-        print(f"CSV Output: {selections['csv_output']}")
-        
-        # Run simulations with GUI selections
-        run_simulations(
-            idf_files=selections['idf_files'],
-            weather_file=selections['epw_file'],
-            eplus_path=selections['eplus_path'],
-            max_workers=selections['max_workers'],
-            csv_output=selections['csv_output']
-        )
-    else:
-        # Command line mode - use existing logic
+    else: # Command line mode
         current_dir = os.getcwd()
         
         # Find all IDF files in the current directory
