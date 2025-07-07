@@ -19,6 +19,9 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 - **CSV Reporting**: Generates a detailed CSV report of all simulation runs
 - **Resource Management**: Monitors and displays CPU and memory usage for each simulation
 
+## Showcase
+![Showcase](eP_P-showcase.gif)
+
 ## Installation
 
 ### Prerequisites
