@@ -725,6 +725,7 @@ class EnergyPlusGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title(f"{APP_NAME} v{VERSION}")
+        self.root.iconbitmap('eP_P.ico')
         self.root.geometry("600x600")
 
         # End Process on close
