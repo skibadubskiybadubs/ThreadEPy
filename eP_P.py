@@ -42,6 +42,10 @@ import multiprocessing
 from multiprocessing import Manager, Process, cpu_count
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
+import atexit
+import signal
+import os
+import sys
 
 # Check if dependencies are installed, if not, install them
 def check_and_install_dependencies():
@@ -651,6 +655,9 @@ class EnergyPlusGUI:
         self.root = tk.Tk()
         self.root.title("EnergyPlus Parallel Simulation Setup")
         self.root.geometry("800x600")
+
+        # End Process on close
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
         # Variables to store user selections
         self.idf_folder = tk.StringVar()
@@ -890,6 +897,16 @@ class EnergyPlusGUI:
         self.result = None
         self.root.quit()
         self.root.destroy()
+        os._exit(0)
+        sys.exit(0)
+    
+    def on_closing(self):
+        """window closing event"""
+        self.result = None
+        self.root.quit()
+        self.root.destroy()
+        os._exit(0)
+        sys.exit(0)
         
     def show(self):
         """Show the GUI and return the result"""
@@ -1448,6 +1465,24 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=DEFAULT_EPLUS_
             
     print(f"\nResults CSV has been saved to: {csv_output} ({len(csv_written)} simulations recorded)")
 
+def cleanup_and_exit():
+    """Cleanup function to ensure process termination"""
+    try:
+        # Terminate any remaining multiprocessing processes
+        for process in multiprocessing.active_children():
+            process.terminate()
+            process.join(timeout=1)
+            if process.is_alive():
+                process.kill()
+    except:
+        pass
+    
+    os._exit(0)
+
+def signal_handler(signum, frame):
+    """Handle system signals"""
+    cleanup_and_exit()
+
 def main():
     parser = argparse.ArgumentParser(description='Run EnergyPlus simulations in parallel with Rich UI')
     parser.add_argument('--eplus', type=str, default=DEFAULT_EPLUS_PATH, help='Path to EnergyPlus installation directory')
@@ -1467,7 +1502,7 @@ def main():
         
         if selections is None:
             print("User cancelled. Exiting.")
-            return
+            cleanup_and_exit()
         
         print("Starting simulations with selected parameters...")
         print(f"IDF Files: {len(selections['idf_files'])} files")
