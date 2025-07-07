@@ -33,7 +33,7 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/skibadubskiybadubs/energyplus_multiprocessing.git
+   git clone https://github.com/skibadubskiybadubs/epeepeepy.git
    cd energyplus-parallel
    ```
 
@@ -50,12 +50,12 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
    There are several ways to run the script. You can enable the built-in GUI by simply calling the script without any additional arguments:
    ```bash
-   python energyplus_parallel.py
+   python eP_P.py
    ```
 
    Otherwise, you can skip the built-in GUI to immediately run the script. In this case, all the .idf and .epw files must be located in the root folder along with the script:
    ```bash
-   python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0"
+   python eP_P.py --eplus "C:\EnergyPlusV23-2-0"
    ```
 
 ### Command-line Arguments
@@ -67,7 +67,7 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 ### Example
 
 ```bash
-python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0" --max-workers 6 --csv "results.csv"
+python eP_P.py --eplus "C:\EnergyPlusV23-2-0" --max-workers 6 --csv "results.csv"
 ```
 
 ## How It Works
