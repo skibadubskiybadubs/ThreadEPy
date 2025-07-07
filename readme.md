@@ -6,7 +6,7 @@ A Python utility for running multiple EnergyPlus simulations in parallel with re
 
 This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
 
-![GUI](https://github.com/user-attachments/assets/1e7d7124-0c05-49bc-9389-49997f0e72c4)
+![GUI](https://raw.githubusercontent.com/skibadubskiybadubs/energyplus_multiprocessing/main/img2.png)
 
 ![EnergyPlus Parallel Simulations](https://raw.githubusercontent.com/skibadubskiybadubs/energyplus_multiprocessing/main/img.png)
 
