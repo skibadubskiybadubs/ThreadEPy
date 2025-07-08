@@ -1,6 +1,7 @@
-# EnergyPlus Parallel Simulator
+# multipoo
+## Embarrassingly Parallel EnergyPlus Python Simulator
 
-A Python utility for running multiple EnergyPlus simulations in parallel with real-time monitoring.
+A Python utility for bulk running EnergyPlus simulations on multiple threads with real-time monitoring.
 
 ## Overview
 
@@ -33,8 +34,8 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/skibadubskiybadubs/epeepeepy.git
-   cd energyplus-parallel
+   git clone https://github.com/skibadubskiybadubs/multipoo.git
+   cd multipoo
    ```
 
 2. Install the required dependencies:
