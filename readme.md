@@ -1,4 +1,4 @@
-# multipoo
+# ThreadEPy
 ## Embarrassingly Parallel EnergyPlus Python Simulator
 
 A Python utility for massive launch of EnergyPlus simulations on multiple threads with real-time monitoring.
@@ -34,8 +34,8 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/skibadubskiybadubs/multipoo.git
-   cd multipoo
+   git clone https://github.com/skibadubskiybadubs/ThreadEPy.git
+   cd ThreadEPy
    ```
 
 2. Install the required dependencies:
