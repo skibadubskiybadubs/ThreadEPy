@@ -1,7 +1,7 @@
 # multipoo
 ## Embarrassingly Parallel EnergyPlus Python Simulator
 
-A Python utility for bulk running EnergyPlus simulations on multiple threads with real-time monitoring.
+A Python utility for massive launch of EnergyPlus simulations on multiple threads with real-time monitoring.
 
 ## Overview
 
