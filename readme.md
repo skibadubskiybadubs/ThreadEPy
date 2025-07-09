@@ -1,10 +1,11 @@
-# EnergyPlus Parallel Simulator
+# ThreadEPy
+## Embarrassingly Parallel EnergyPlus Python Simulator
 
-A Python utility for running multiple EnergyPlus simulations in parallel with real-time monitoring.
+A Python utility for massive launch of EnergyPlus simulations on multiple threads with real-time monitoring.
 
 ## Overview
 
-This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
+This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a GUI and a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
 
 ![GUI](img2.png)
 
@@ -19,6 +20,9 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 - **CSV Reporting**: Generates a detailed CSV report of all simulation runs
 - **Resource Management**: Monitors and displays CPU and memory usage for each simulation
 
+## Showcase
+![Showcase](eP_P-showcase.gif)
+
 ## Installation
 
 ### Prerequisites
@@ -30,8 +34,8 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/skibadubskiybadubs/energyplus_multiprocessing.git
-   cd energyplus-parallel
+   git clone https://github.com/skibadubskiybadubs/ThreadEPy.git
+   cd ThreadEPy
    ```
 
 2. Install the required dependencies:
@@ -47,12 +51,12 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 
    There are several ways to run the script. You can enable the built-in GUI by simply calling the script without any additional arguments:
    ```bash
-   python energyplus_parallel.py
+   python eP_P.py
    ```
 
    Otherwise, you can skip the built-in GUI to immediately run the script. In this case, all the .idf and .epw files must be located in the root folder along with the script:
    ```bash
-   python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0"
+   python eP_P.py --eplus "C:\EnergyPlusV23-2-0"
    ```
 
 ### Command-line Arguments
@@ -64,7 +68,7 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 ### Example
 
 ```bash
-python energyplus_parallel.py --eplus "C:\EnergyPlusV23-2-0" --max-workers 6 --csv "results.csv"
+python eP_P.py --eplus "C:\EnergyPlusV23-2-0" --max-workers 6 --csv "results.csv"
 ```
 
 ## How It Works
