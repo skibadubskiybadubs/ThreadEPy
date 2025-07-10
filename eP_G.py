@@ -104,13 +104,16 @@ class EnergyPlusGUI:
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)  # Content area gets most space
         
+
+
+
         banner_frame = ttk.Frame(main_frame, style='Banner.TFrame')
-        banner_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 2))
+        banner_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 0))
         banner_frame.columnconfigure(0, weight=1)
         
-        padding_y = "0.5m"
-        padding_x = "0.1m"
-        
+        padding_y = 0
+        padding_x = 0
+
         banner_content = ttk.Frame(banner_frame, style='Banner.TFrame')
         banner_content.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=padding_x, pady=padding_y)
         banner_content.columnconfigure(0, weight=1)
@@ -120,7 +123,7 @@ class EnergyPlusGUI:
 
         subtitle_label1 = tk.Label(
             banner_content,
-            text="Embarrassingly Parallel EnergyPlus Python Simulator",
+            text="Multithreading EnergyPlus Simulator",
             fg="#0051FF",
             bg=UI_COLORS['banner_bg'],
             font=('Calibri', 12)
@@ -141,9 +144,11 @@ class EnergyPlusGUI:
         subtitle_label.grid(row=2, column=0, pady=(0, 0))
         subtitle_label.bind("<Button-1>", open_github_link)
 
-        
         version_label = ttk.Label(banner_content, text=f"Version {VERSION}", style='Version.TLabel', font=('Calibri', 8, 'italic'))
-        version_label.grid(row=3, column=0)
+        version_label.grid(row=3, column=0, pady=(0, 0))
+
+
+
         
         content_frame = ttk.Frame(main_frame, style='Dark.TFrame')
         content_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=padding_y, pady="1m")
