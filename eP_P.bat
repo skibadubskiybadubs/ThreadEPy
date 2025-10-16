@@ -7,5 +7,6 @@ if not exist "eP_P.py" (
     exit /b 1
 )
 
+set PYTHONDONTWRITEBYTECODE=1
 python eP_P.py
 pause

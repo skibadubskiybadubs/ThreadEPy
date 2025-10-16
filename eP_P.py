@@ -69,17 +69,25 @@ def main():
         config = load_config_from_temp(args.run_simulations)
         if not config:
             print("Error: Could not load simulation configuration")
-            input("Press Enter to exit...")
+            print("\nPress Enter to exit...")
+            input()
             return
         
         # Run simulations with loaded config
-        run_simulations(
-            idf_files=config['idf_files'],
-            weather_file=config['epw_file'],
-            eplus_path=config['eplus_path'],
-            max_workers=config['max_workers'],
-            csv_output=config['csv_output']
-        )
+        try:
+            run_simulations(
+                idf_files=config['idf_files'],
+                weather_file=config['epw_file'],
+                eplus_path=config['eplus_path'],
+                max_workers=config['max_workers'],
+                csv_output=config['csv_output']
+            )
+        except Exception as e:
+            print(f"\nError during simulation: {e}")
+            import traceback
+            traceback.print_exc()
+            print("\nPress Enter to exit...")
+            input()
         return
     
     # Check if any command line arguments were provided (excluding defaults)
@@ -95,6 +103,8 @@ def main():
         idf_files = glob.glob(os.path.join(current_dir, "*.idf"))
         if not idf_files:
             print(f"No IDF files found in the current directory")
+            print("\nPress Enter to exit...")
+            input()
             return
         
         # Find weather files
@@ -104,16 +114,25 @@ def main():
             epw_files = glob.glob(os.path.join(current_dir, "*.epw"))
             if not epw_files:
                 print(f"No EPW weather files found in the current directory")
+                print("\nPress Enter to exit...")
+                input()
                 return
             weather_file = epw_files[0]
-        
-        run_simulations(
-            idf_files=idf_files,
-            weather_file=weather_file,
-            eplus_path=args.eplus,
-            max_workers=args.max_workers,
-            csv_output=args.csv
-        )
+
+        try:
+            run_simulations(
+                idf_files=idf_files,
+                weather_file=weather_file,
+                eplus_path=args.eplus,
+                max_workers=args.max_workers,
+                csv_output=args.csv
+            )
+        except Exception as e:
+            print(f"\nError during simulation: {e}")
+            import traceback
+            traceback.print_exc()
+            print("\nPress Enter to exit...")
+            input()
 
 
 if __name__ == "__main__":

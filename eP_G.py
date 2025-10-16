@@ -374,12 +374,12 @@ class EnergyPlusGUI:
         try:
             # Get the path to the current script
             script_path = os.path.abspath(__file__)
-            # Get the main.py path (assuming it's in the same directory)
-            main_script_path = os.path.join(os.path.dirname(script_path), 'main.py')
-            
+            # Get the eP_P.py path (main entry point, assuming it's in the same directory)
+            main_script_path = os.path.join(os.path.dirname(script_path), 'eP_P.py')
+
             # Launch new process with console and config file
             subprocess.Popen([
-                sys.executable, main_script_path, 
+                sys.executable, main_script_path,
                 '--run-simulations', config_file
             ], creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0)
             
