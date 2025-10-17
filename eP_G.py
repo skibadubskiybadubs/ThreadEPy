@@ -10,7 +10,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from multiprocessing import cpu_count
 
-from eP_C import APP_NAME, VERSION, DEFAULT_EPLUS_PATH, UI_COLORS
+from eP_C import APP_NAME, APP_NAME_ASCII, VERSION, DEFAULT_EPLUS_PATH, UI_COLORS
 from eP_U import save_config_to_temp
 
 
@@ -48,13 +48,11 @@ class EnergyPlusGUI:
         self.create_widgets()
 
     def on_window_resize(self, event):
-        """Handle window resize events for responsive design"""
         if event.widget == self.root:
             # Update canvas scroll region when window is resized
             self.root.after_idle(lambda: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
     def setup_dark_theme(self):
-        """Configure dark theme for the application"""
         # Calculate responsive font sizes based on window size
         base_width = 900
         current_width = self.root.winfo_width() if self.root.winfo_width() > 1 else base_width
@@ -98,7 +96,6 @@ class EnergyPlusGUI:
                             font=('Calibri', subtitle_font_size, 'italic'))
 
     def create_widgets(self):
-        """Create the GUI widgets with responsive dark theme"""
         main_frame = ttk.Frame(self.root, style='Dark.TFrame')
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         main_frame.columnconfigure(0, weight=1)
@@ -117,35 +114,42 @@ class EnergyPlusGUI:
         banner_content = ttk.Frame(banner_frame, style='Banner.TFrame')
         banner_content.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=padding_x, pady=padding_y)
         banner_content.columnconfigure(0, weight=1)
-        
-        title_label = ttk.Label(banner_content, text=APP_NAME, style='Banner.TLabel')
-        title_label.grid(row=0, column=0, pady=(0, 0))
+
+        # ASCII art title
+        title_label = tk.Label(
+            banner_content,
+            text=APP_NAME_ASCII,
+            fg='#6f9bd3',
+            bg=UI_COLORS['banner_bg'],
+            font=('Consolas', 6),
+            justify=tk.LEFT
+        )
+        title_label.grid(row=0, column=0, pady=(5, 0))
 
         subtitle_label1 = tk.Label(
             banner_content,
             text="Multithreading EnergyPlus Simulator",
-            fg="#0051FF",
+            fg='#bc6b6a',
             bg=UI_COLORS['banner_bg'],
             font=('Calibri', 12)
         )
-        subtitle_label1.grid(row=1, column=0, pady=(0, 0))
+        subtitle_label1.grid(row=1, column=0, pady=(2, 0))
 
         github_url = "https://github.com/skibadubskiybadubs/energyplus_multiprocessing"
         def open_github_link(event):
             os.startfile(github_url)
+
+        # Merged subtitle and version label
         subtitle_label = tk.Label(
             banner_content,
-            text="by Misha Brovin",
-            fg="#ffffff",
+            text=f"by Misha Brovin  •  Version {VERSION}",
+            fg="#9197AE",
             bg=UI_COLORS['banner_bg'],
             cursor="hand2",
             font=('Calibri', 8, 'italic')
         )
-        subtitle_label.grid(row=2, column=0, pady=(0, 0))
+        subtitle_label.grid(row=2, column=0, pady=(0, 5))
         subtitle_label.bind("<Button-1>", open_github_link)
-
-        version_label = ttk.Label(banner_content, text=f"Version {VERSION}", style='Version.TLabel', font=('Calibri', 8, 'italic'))
-        version_label.grid(row=3, column=0, pady=(0, 0))
 
 
 
