@@ -118,17 +118,17 @@ class SimulationStatus:
             progress_pct = int((completed_count / total) * 100) if total > 0 else 0
             title = f"EnergyPlus Parallel Simulations - {completed_count}/{total} ({progress_pct}%)"
             
-        table = Table(title=title, box=box.ROUNDED)
-        
-        # Add columns
-        table.add_column("Simulation", style="cyan")
-        table.add_column("Status", style="green")
-        table.add_column("Progress", style="magenta")
-        table.add_column("CPU %", style="yellow")
-        table.add_column("Memory", style="yellow")
-        table.add_column("Warnings", style="yellow")
-        table.add_column("Errors", style="red")
-        table.add_column("Runtime", style="blue")
+        table = Table(title=title, box=box.ROUNDED, show_lines=False, pad_edge=False, expand=False)
+
+        # Add columns - Status symbol integrated into Simulation name for guaranteed visibility
+        # Progress bar always visible with fixed width
+        table.add_column("Simulation", style="cyan", no_wrap=True, overflow="ellipsis")
+        table.add_column("Progress", style="magenta", justify="left", no_wrap=True, width=27)
+        table.add_column("CPU %", style="yellow", justify="right")
+        table.add_column("Memory", style="yellow", justify="right")
+        table.add_column("Warnings", style="yellow", justify="center")
+        table.add_column("Errors", style="red", justify="center")
+        table.add_column("Runtime", style="blue", justify="right")
         
         # Add rows for each simulation sorted by status (running first, then waiting, then completed)
         with self._lock:
@@ -153,30 +153,42 @@ class SimulationStatus:
                     runtime = 0
                 
                 runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
-                
-                # Progress bar representation
+
+                # Progress bar representation - using consistent width and formatting
                 progress = info['progress']
-                progress_bar = f"[{'#' * (progress // 5)}{' ' * (20 - progress // 5)}] {progress}%"
-                
-                # Status color
+                bar_width = 20
+                filled = int((progress / 100) * bar_width)
+                empty = bar_width - filled
+                # Use block characters for smoother appearance
+                progress_bar = f"[{'█' * filled}{'░' * empty}] {progress:>3}%"
+
+                # Status symbol and color - integrated with simulation name for guaranteed visibility
+                # Using ASCII-compatible symbols for better font compatibility
                 status = info['status']
                 if status == 'Waiting':
                     status_color = 'yellow'
+                    status_symbol = '»'  # Waiting/paused
                 elif status == 'Initializing' or status == 'Running':
                     status_color = 'green'
+                    status_symbol = '►'  # Running/playing
                 elif status == 'Completed':
                     status_color = 'blue'
+                    status_symbol = '√'  # Completed/checkmark
                 else:
+                    # Failed or any other status
                     status_color = 'red'
-                
+                    status_symbol = '×'  # Failed/error
+
+                # Prepend status symbol to simulation name to ensure it's always visible
+                sim_name_with_status = f"[{status_color}]{status_symbol}[/{status_color}] {name}"
+
                 table.add_row(
-                    name,
-                    f"[{status_color}]{status}[/{status_color}]",
+                    sim_name_with_status,
                     progress_bar,
-                    f"{info['cpu']:.1f}%",
-                    f"{info['memory']:.1f} MB",
-                    str(info['warnings']),
-                    str(info['errors']),
+                    f"{info['cpu']:>5.1f}%",
+                    f"{info['memory']:>6.1f} MB",
+                    f"{info['warnings']:>3}",
+                    f"{info['errors']:>3}",
                     runtime_str
                 )
         

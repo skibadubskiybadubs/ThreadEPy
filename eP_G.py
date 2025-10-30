@@ -235,10 +235,10 @@ class EnergyPlusGUI:
         action_frame = ttk.Frame(content_frame, style='Dark.TFrame')
         action_frame.grid(row=5, column=0, columnspan=3, pady="1m")
         
-        start_btn = ttk.Button(action_frame, text="Start Simulations", command=self.start_simulations, style='Dark.TButton')
-        start_btn.pack(side=tk.LEFT, padx="1m")
+        start_btn = ttk.Button(action_frame, text="『▶』", command=self.start_simulations, style='Dark.TButton')
+        start_btn.pack(side=tk.LEFT, padx="0.5m")
         
-        cancel_btn = ttk.Button(action_frame, text="Cancel", command=self.cancel, style='Dark.TButton')
+        cancel_btn = ttk.Button(action_frame, text="『✖』", command=self.cancel, style='Dark.TButton')
         cancel_btn.pack(side=tk.LEFT, padx="0.5m")
         
         # Default vals

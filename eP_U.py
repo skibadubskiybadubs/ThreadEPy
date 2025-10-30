@@ -111,10 +111,67 @@ def load_config_from_temp(config_file):
         return None
 
 
+def parse_err_file(idf_file):
+    """
+    Parse the EnergyPlus .err file to extract warning and error counts.
+
+    Args:
+        idf_file (str): Path to the IDF file
+
+    Returns:
+        tuple: (warnings_count, errors_count) or (0, 0) if file not found
+    """
+    # Construct the expected .err file path
+    idf_dir = os.path.dirname(idf_file)
+    idf_basename = os.path.basename(idf_file)
+    idf_name = os.path.splitext(idf_basename)[0]
+    err_file = os.path.join(idf_dir, f"{idf_name}out.err")
+
+    warnings_count = 0
+    errors_count = 0
+
+    if not os.path.exists(err_file):
+        return warnings_count, errors_count
+
+    try:
+        with open(err_file, 'r', encoding='utf-8', errors='ignore') as f:
+            # Read the entire file to find the summary line at the end
+            content = f.read()
+
+            # Look for the EnergyPlus completion summary line
+            # Pattern examples:
+            # "************* EnergyPlus Completed Successfully-- 19520 Warning; 1 Severe Errors; Elapsed Time=00hr 20min  1.99sec"
+            # "************* EnergyPlus Completed Successfully-- 0 Warning; 0 Severe Errors; Elapsed Time=00hr 01min 30.00sec"
+            # Also handle warmup summary:
+            # "************* EnergyPlus Warmup Error Summary. During Warmup: 1 Warning; 0 Severe Errors."
+
+            # Pattern 1: Main completion summary
+            pattern1 = r'EnergyPlus\s+Completed\s+Successfully--\s*(\d+)\s+Warning.*?(\d+)\s+Severe\s+Errors'
+            match1 = re.search(pattern1, content, re.IGNORECASE)
+
+            if match1:
+                warnings_count = int(match1.group(1))
+                errors_count = int(match1.group(2))
+            else:
+                # Pattern 2: Warmup summary (may appear in addition to main summary)
+                # We'll still look for this but prefer the main summary
+                pattern2 = r'During\s+Warmup:\s*(\d+)\s+Warning.*?(\d+)\s+Severe\s+Errors'
+                match2 = re.search(pattern2, content, re.IGNORECASE)
+
+                if match2:
+                    warnings_count = int(match2.group(1))
+                    errors_count = int(match2.group(2))
+
+    except Exception as e:
+        print(f"Error parsing .err file for {idf_name}: {str(e)}")
+
+    return warnings_count, errors_count
+
+
 def add_simulation_to_csv(idf_file, weather_file, info, row_number, csv_file):
     """
     Add a single simulation result to the CSV file.
-    
+
     Args:
         idf_file (str): Path to the IDF file
         weather_file (str): Path to the weather file
@@ -124,18 +181,18 @@ def add_simulation_to_csv(idf_file, weather_file, info, row_number, csv_file):
     """
     # Check if CSV file exists, create with header if not
     file_exists = os.path.isfile(csv_file)
-    
+
     # Get the base names
     idf_basename = os.path.basename(idf_file)
     idf_name = os.path.splitext(idf_basename)[0]
     weather_base = os.path.basename(weather_file)
-    
+
     # Determine completion status - any non-completed status is considered failed (0)
     progress = 1 if info['status'] == 'Completed' else 0
-    
+
     # Get completion message
     message = "EnergyPlus Completed Successfully" if progress == 1 else info['status']
-    
+
     # Calculate runtime
     if info['start_time'] and info['end_time']:
         runtime = info['end_time'] - info['start_time']
@@ -144,7 +201,19 @@ def add_simulation_to_csv(idf_file, weather_file, info, row_number, csv_file):
     hours = int(runtime // 3600)
     minutes = int((runtime % 3600) // 60)
     seconds = int(runtime % 60)
-    
+
+    # Parse the .err file to get actual warning and error counts
+    warnings_count, errors_count = parse_err_file(idf_file)
+
+    # If the .err file parsing returned non-zero values, use those instead of the tracked counts
+    if warnings_count > 0 or errors_count > 0:
+        warnings = warnings_count
+        errors = errors_count
+    else:
+        # Fallback to the tracked counts (from real-time parsing)
+        warnings = info['warnings']
+        errors = info['errors']
+
     # Format data for CSV
     row = [
         row_number,              # Row number / sequential ID
@@ -153,23 +222,23 @@ def add_simulation_to_csv(idf_file, weather_file, info, row_number, csv_file):
         idf_basename,            # ModelFile
         progress,                # Progress (1-Completed/0-Failed)
         message,                 # Message
-        info['warnings'],        # Warnings
-        info['errors'],          # Errors
+        warnings,                # Warnings (from .err file)
+        errors,                  # Errors (from .err file)
         f"{hours:02d}",          # Hours
         f"{minutes:02d}",        # Minutes
         f"{seconds:02d}"         # Seconds
     ]
-    
+
     with open(csv_file, 'a', newline='') as f:
         writer = csv.writer(f)
-        
+
         # Write header if file doesn't exist
         if not file_exists:
             writer.writerow(CSV_HEADERS)
 
         writer.writerow(row)
-        
-    print(f"Added to CSV: {idf_name} - Status: {info['status']} - Progress: {progress}")
+
+    print(f"Added to CSV: {idf_name} - Status: {info['status']} - Progress: {progress} - Warnings: {warnings}, Errors: {errors}")
 
 
 def allocate_console():

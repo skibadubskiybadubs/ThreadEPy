@@ -19,7 +19,7 @@ from multiprocessing import Manager, Process
 
 from eP_D import import_dependencies
 from eP_T import SimulationStatus, process_monitor, update_process
-from eP_U import add_simulation_to_csv, resolve_csv_path
+from eP_U import add_simulation_to_csv, resolve_csv_path, parse_err_file
 
 # Import Rich components
 rich_components = import_dependencies()
@@ -693,7 +693,7 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_work
     # Final summary
     print("\nAll simulations completed!")
     print("Output files have been saved to the original directory.")
-    
+
     print("\nSimulation Summary:")
     print("-" * 80)
     for idf_file in idf_files:
@@ -704,7 +704,20 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_work
             if info['start_time'] and info['end_time']:
                 runtime = info['end_time'] - info['start_time']
             runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
-            print(f"{idf_name}: {info['status']} in {runtime_str} - Warnings: {info['warnings']}, Errors: {info['errors']}")
+
+            # Parse the .err file to get actual warning and error counts
+            warnings_count, errors_count = parse_err_file(idf_file)
+
+            # If the .err file parsing returned values, use those instead of the tracked counts
+            if warnings_count > 0 or errors_count > 0:
+                warnings = warnings_count
+                errors = errors_count
+            else:
+                # Fallback to the tracked counts (from real-time parsing)
+                warnings = info['warnings']
+                errors = info['errors']
+
+            print(f"{idf_name}: {info['status']} in {runtime_str} - Warnings: {warnings}, Errors: {errors}")
     print("-" * 80)
     
     # Check for output files
