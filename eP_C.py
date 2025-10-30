@@ -2,7 +2,7 @@
     constants
 """
 
-VERSION = "1.3.3"
+VERSION = "1.3.9"
 APP_NAME = "ThreadEPy"
 APP_NAME_ASCII = r"""
        _            _       _    _           _            _                _            _            _    _        _
@@ -25,8 +25,8 @@ UI_COLORS = {
     'fg': '#ffffff',           # White text
     'select_bg': '#404040',    # Selection background
     'select_fg': '#ffffff',    # Selection text
-    'entry_bg': '#f0f0f0',     # Entry background - LIGHTER GRAY
-    'entry_fg': '#000000',     # Entry text - BLACK
+    'entry_bg': '#3a3a3a',     # Entry background - Dark gray
+    'entry_fg': '#ffffff',     # Entry text - White
     'button_bg': '#505050',    # Button background
     'button_fg': '#ffffff',    # Button text
     'button_active': '#606060', # Button active

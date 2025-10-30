@@ -72,20 +72,72 @@ class EnergyPlusGUI:
         # Configure ttk styles for dark theme with responsive fonts
         self.style.configure('Dark.TFrame', background=UI_COLORS['bg'])
         self.style.configure('Dark.TLabel', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'])
-        self.style.configure('Dark.TButton', background=UI_COLORS['button_bg'], foreground=UI_COLORS['button_fg'])
-        self.style.configure('Dark.TEntry', background=UI_COLORS['entry_bg'], foreground=UI_COLORS['entry_fg'])
+        self.style.configure('Dark.TButton',
+                            background=UI_COLORS['button_bg'],
+                            foreground=UI_COLORS['button_fg'],
+                            borderwidth=1,
+                            focuscolor=UI_COLORS['accent'],
+                            padding=(8, 4),
+                            relief='raised')
+        self.style.configure('Dark.TEntry',
+                            fieldbackground=UI_COLORS['entry_bg'],
+                            background=UI_COLORS['entry_bg'],
+                            foreground=UI_COLORS['entry_fg'],
+                            insertcolor=UI_COLORS['entry_fg'],
+                            bordercolor=UI_COLORS['select_bg'],
+                            lightcolor=UI_COLORS['select_bg'],
+                            darkcolor=UI_COLORS['select_bg'])
         self.style.configure('Dark.TCheckbutton', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'])
-        self.style.configure('Dark.TSpinbox', background=UI_COLORS['entry_bg'], foreground=UI_COLORS['entry_fg'])
-        
-        # Configure LabelFrame
-        self.style.configure('Dark.TLabelframe', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'])
-        self.style.configure('Dark.TLabelframe.Label', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'])
-        
-        # Map active states
+        self.style.configure('Dark.TSpinbox',
+                            fieldbackground=UI_COLORS['entry_bg'],
+                            background=UI_COLORS['entry_bg'],
+                            foreground=UI_COLORS['entry_fg'],
+                            insertcolor=UI_COLORS['entry_fg'],
+                            arrowcolor=UI_COLORS['entry_fg'],
+                            bordercolor=UI_COLORS['select_bg'])
+
+        # Configure LabelFrame with padding
+        self.style.configure('Dark.TLabelframe', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'], borderwidth=2, relief='groove')
+        self.style.configure('Dark.TLabelframe.Label', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'], font=('Calibri', 10, 'bold'))
+
+        # Map active states for buttons
         self.style.map('Dark.TButton',
                     background=[('active', UI_COLORS['button_active']),
-                                ('pressed', UI_COLORS['accent'])])
-        
+                                ('pressed', UI_COLORS['accent'])],
+                    foreground=[('active', '#ffffff')],
+                    relief=[('pressed', 'sunken')])
+
+        # Configure action button style (Start/Cancel buttons) - minimalistic with banner colors
+        self.style.configure('Action.TButton',
+                            background=UI_COLORS['banner_bg'],
+                            foreground='#bc6b6a',
+                            borderwidth=1,
+                            focuscolor='none',
+                            padding=(20, 8),
+                            relief='flat',
+                            font=('Consolas', 8))
+        self.style.map('Action.TButton',
+                    background=[('active', '#252525'),
+                                ('pressed', '#151515')],
+                    foreground=[('active', '#bc6b6a')],
+                    relief=[('pressed', 'flat')])
+
+        # Configure browse button style - minimalistic with overall background and gray text
+        self.style.configure('Browse.TButton',
+                            background=UI_COLORS['bg'],
+                            foreground='#9197AE',
+                            borderwidth=0,
+                            focuscolor='none',
+                            padding=(1, 4),
+                            relief='flat',
+                            anchor='c',
+                            font=('Consolas', 10))
+        self.style.map('Browse.TButton',
+                    background=[('active', UI_COLORS['select_bg']),
+                                ('pressed', UI_COLORS['select_bg'])],
+                    foreground=[('active', '#9197AE')],
+                    relief=[('pressed', 'flat')])
+
         # Banner styles with responsive fonts
         self.style.configure('Banner.TFrame', background=UI_COLORS['banner_bg'])
         self.style.configure('Banner.TLabel', background=UI_COLORS['banner_bg'], foreground='yellow', 
@@ -99,20 +151,14 @@ class EnergyPlusGUI:
         main_frame = ttk.Frame(self.root, style='Dark.TFrame')
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         main_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(1, weight=1)  # Content area gets most space
-        
-
-
+        main_frame.rowconfigure(1, weight=1)  
 
         banner_frame = ttk.Frame(main_frame, style='Banner.TFrame')
-        banner_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 0))
+        banner_frame.grid(row=0, column=0, sticky=(tk.W, tk.E))
         banner_frame.columnconfigure(0, weight=1)
-        
-        padding_y = 0
-        padding_x = 0
 
         banner_content = ttk.Frame(banner_frame, style='Banner.TFrame')
-        banner_content.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=padding_x, pady=padding_y)
+        banner_content.grid(row=0, column=0, sticky=(tk.W, tk.E))
         banner_content.columnconfigure(0, weight=1)
 
         # ASCII art title
@@ -139,7 +185,7 @@ class EnergyPlusGUI:
         def open_github_link(event):
             os.startfile(github_url)
 
-        # Merged subtitle and version label
+        # subtitle and version label
         subtitle_label = tk.Label(
             banner_content,
             text=f"by Misha Brovin  •  Version {VERSION}",
@@ -153,93 +199,110 @@ class EnergyPlusGUI:
 
 
 
-        
-        content_frame = ttk.Frame(main_frame, style='Dark.TFrame')
-        content_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=padding_y, pady="1m")
-        content_frame.columnconfigure(1, weight=1)
-        content_frame.rowconfigure(4, weight=1)  # Files frame gets most space
 
-        row_pady = "0.8m"
-        
+        content_frame = ttk.Frame(main_frame, style='Dark.TFrame')
+        content_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=(0, 15))
+        content_frame.columnconfigure(0, weight=0)
+        content_frame.columnconfigure(1, weight=1)
+        content_frame.columnconfigure(2, weight=0)
+        content_frame.rowconfigure(4, weight=1) 
+
+        row_pady = 3
+
         # IDF Folder Selection
         ttk.Label(content_frame, text="IDF Files Folder:", style='Dark.TLabel').grid(
-            row=0, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+            row=0, column=0, sticky=tk.W, pady=row_pady, padx=(0, 10))
         folder_entry = ttk.Entry(content_frame, textvariable=self.idf_folder, style='Dark.TEntry')
-        folder_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
-        ttk.Button(content_frame, text="Browse", command=self.select_idf_folder, style='Dark.TButton').grid(
-            row=0, column=2, pady=row_pady)
-        
+        folder_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(5, 5))
+
+        bt_enter = "⌞   🗁   ⌝"
+        bt_exit = "⌞   🗀   ⌝"
+
+        idf_browse_btn = ttk.Button(content_frame, text=bt_exit, command=self.select_idf_folder, style='Browse.TButton')
+        idf_browse_btn.grid(row=0, column=2, pady=row_pady, sticky=tk.E)
+        idf_browse_btn.bind('<Enter>', lambda _: idf_browse_btn.config(text=bt_enter))
+        idf_browse_btn.bind('<Leave>', lambda _: idf_browse_btn.config(text=bt_exit))
+
         # Weather File Selection
         ttk.Label(content_frame, text="Weather File (.epw):", style='Dark.TLabel').grid(
-            row=1, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+            row=1, column=0, sticky=tk.W, pady=row_pady, padx=(0, 10))
         weather_entry = ttk.Entry(content_frame, textvariable=self.epw_file, style='Dark.TEntry')
-        weather_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
-        ttk.Button(content_frame, text="Browse", command=self.select_epw_file, style='Dark.TButton').grid(
-            row=1, column=2, pady=row_pady)
-        
+        weather_entry.grid(row=1, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(5, 5))
+
+        epw_browse_btn = ttk.Button(content_frame, text=bt_exit, command=self.select_epw_file, style='Browse.TButton')
+        epw_browse_btn.grid(row=1, column=2, pady=row_pady, sticky=tk.E)
+        epw_browse_btn.bind('<Enter>', lambda _: epw_browse_btn.config(text=bt_enter))
+        epw_browse_btn.bind('<Leave>', lambda _: epw_browse_btn.config(text=bt_exit))
+
         # EnergyPlus Folder Selection
         ttk.Label(content_frame, text="EnergyPlus Folder:", style='Dark.TLabel').grid(
-            row=2, column=0, sticky=tk.W, pady=row_pady, padx=(0, "1m"))
+            row=2, column=0, sticky=tk.W, pady=row_pady, padx=(0, 10))
         eplus_entry = ttk.Entry(content_frame, textvariable=self.eplus_folder, style='Dark.TEntry')
-        eplus_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(0, "1m"))
-        ttk.Button(content_frame, text="Browse", command=self.select_eplus_folder, style='Dark.TButton').grid(
-            row=2, column=2, pady=row_pady)
+        eplus_entry.grid(row=2, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(5, 5))
+
+        eplus_browse_btn = ttk.Button(content_frame, text=bt_exit, command=self.select_eplus_folder, style='Browse.TButton')
+        eplus_browse_btn.grid(row=2, column=2, pady=row_pady, sticky=tk.E)
+        eplus_browse_btn.bind('<Enter>', lambda _: eplus_browse_btn.config(text=bt_enter))
+        eplus_browse_btn.bind('<Leave>', lambda _: eplus_browse_btn.config(text=bt_exit))
         
         # Settings frame
         settings_frame = ttk.LabelFrame(content_frame, text="Simulation Settings", style='Dark.TLabelframe')
-        settings_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady="1m")
-        settings_frame.columnconfigure(2, weight=1)
-        
+        settings_frame.grid(row=3, column=0, columnspan=3, sticky=(tk.W, tk.E), pady=6)
+
+        # Configure settings_frame grid to match content_frame proportions
+        settings_frame.columnconfigure(0, weight=0)  # Labels
+        settings_frame.columnconfigure(1, weight=0)  # Max workers spinbox
+        settings_frame.columnconfigure(2, weight=0)  # CSV label
+        settings_frame.columnconfigure(3, weight=1)  # CSV entry - expands
+        settings_frame.columnconfigure(4, weight=0)  # Spacer to match Browse button column
+
         # Compact settings layout
         ttk.Label(settings_frame, text="Max Workers:", style='Dark.TLabel').grid(
-            row=0, column=0, sticky=tk.W, padx="1m", pady="0.5m")
-        ttk.Spinbox(settings_frame, from_=1, to=cpu_count(), textvariable=self.max_workers, 
-                    width=5, style='Dark.TSpinbox').grid(row=0, column=1, padx="0.5m", pady="0.5m")
-        
+            row=0, column=0, sticky=tk.W, padx=10, pady=6)
+        ttk.Spinbox(settings_frame, from_=1, to=cpu_count(), textvariable=self.max_workers,
+                    width=5, style='Dark.TSpinbox').grid(row=0, column=1, padx=5, pady=6, sticky=tk.W)
+
         ttk.Label(settings_frame, text="CSV Output:", style='Dark.TLabel').grid(
-            row=0, column=2, sticky=tk.W, padx="1m", pady="0.5m")
+            row=0, column=2, sticky=tk.W, padx=(30, 10), pady=6)
         csv_entry = ttk.Entry(settings_frame, textvariable=self.csv_output, style='Dark.TEntry')
-        csv_entry.grid(row=0, column=3, sticky=(tk.W, tk.E), padx=("0.5m", "1m"), pady="0.5m")
+        csv_entry.grid(row=0, column=3, sticky=(tk.W, tk.E), padx=(0, 0), pady=6)
+
+        # Add a spacer frame in column 4 to reserve space matching the Browse button width
+        spacer = ttk.Frame(settings_frame, width=80, style='Dark.TFrame')
+        spacer.grid(row=0, column=4, sticky=(tk.N, tk.S, tk.E, tk.W))
+        spacer.grid_propagate(False)
         
-        # IDF Files Selection Frame 
+        # IDF Files Selection Frame
         self.files_frame = ttk.LabelFrame(content_frame, text="Select IDF Files to Run", style='Dark.TLabelframe')
-        self.files_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady="1m")
+        self.files_frame.grid(row=4, column=0, columnspan=3, sticky=(tk.W, tk.E, tk.N, tk.S), pady=6)
         self.files_frame.columnconfigure(0, weight=1)
         self.files_frame.rowconfigure(0, weight=1)
-        
+
         # Scrollable frame setup
         self.canvas = tk.Canvas(self.files_frame, bg=UI_COLORS['bg'], highlightthickness=0)
         self.scrollbar = ttk.Scrollbar(self.files_frame, orient="vertical", command=self.canvas.yview)
         self.scrollable_frame = ttk.Frame(self.canvas, style='Dark.TFrame')
-        
+
         self.scrollable_frame.bind(
             "<Configure>",
             lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         )
-        
+
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
-        
-        self.canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx="1m", pady="1m")
-        self.scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S), padx=(0, "0.5m"), pady="1m")
-        
-        # BUTTONS
-        button_frame = ttk.Frame(self.files_frame, style='Dark.TFrame')
-        button_frame.grid(row=1, column=0, columnspan=2, pady="0.5m")
-        ttk.Button(button_frame, text="Select All", command=self.select_all_files, style='Dark.TButton').pack(
-            side=tk.LEFT, padx="0.5m")
-        ttk.Button(button_frame, text="Select None", command=self.select_no_files, style='Dark.TButton').pack(
-            side=tk.LEFT, padx="0.5m")
-        
 
+        self.canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=10)
+        self.scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S), padx=(0, 5), pady=10)
+
+        # Action buttons frame - centered between IDF files frame bottom and window bottom
         action_frame = ttk.Frame(content_frame, style='Dark.TFrame')
-        action_frame.grid(row=5, column=0, columnspan=3, pady="1m")
-        
-        start_btn = ttk.Button(action_frame, text="『▶』", command=self.start_simulations, style='Dark.TButton')
-        start_btn.pack(side=tk.LEFT, padx="0.5m")
-        
-        cancel_btn = ttk.Button(action_frame, text="『✖』", command=self.cancel, style='Dark.TButton')
-        cancel_btn.pack(side=tk.LEFT, padx="0.5m")
+        action_frame.grid(row=5, column=0, columnspan=3, pady=(20, 5))
+
+        start_btn = ttk.Button(action_frame, text="⌞   ▶   ⌝", command=self.start_simulations, style='Action.TButton')
+        start_btn.pack(side=tk.LEFT, padx=6)
+
+        cancel_btn = ttk.Button(action_frame, text="⌞   ✕   ⌝", command=self.cancel, style='Action.TButton')
+        cancel_btn.pack(side=tk.LEFT, padx=6)
         
         # Default vals
         self.eplus_folder.set(DEFAULT_EPLUS_PATH)
@@ -288,12 +351,12 @@ class EnergyPlusGUI:
             no_files_label.pack(pady="1m")
             return
             
-        # Create checkboxes for each IDF file with responsive spacing
-        for i, idf_file in enumerate(self.idf_files):
+        # Create checkboxes for each IDF file with improved spacing
+        for idf_file in self.idf_files:
             var = tk.BooleanVar(value=True)  # Default to selected
             filename = os.path.basename(idf_file)
             checkbox = ttk.Checkbutton(self.scrollable_frame, text=filename, variable=var, style='Dark.TCheckbutton')
-            checkbox.pack(anchor=tk.W, pady="0.3m", padx="1m", fill=tk.X)
+            checkbox.pack(anchor=tk.W, pady=3, padx=10, fill=tk.X)
             self.idf_checkboxes[idf_file] = var
             
     def check_for_epw_file(self):
@@ -305,17 +368,7 @@ class EnergyPlusGUI:
         epw_files = glob.glob(os.path.join(folder, "*.epw"))
         if epw_files:
             self.epw_file.set(epw_files[0])  # Use first EPW file found
-            
-    def select_all_files(self):
-        """Select all IDF files"""
-        for var in self.idf_checkboxes.values():
-            var.set(True)
-            
-    def select_no_files(self):
-        """Deselect all IDF files"""
-        for var in self.idf_checkboxes.values():
-            var.set(False)
-            
+
     def validate_inputs(self):
         """Validate user inputs"""
         if not self.idf_folder.get():
