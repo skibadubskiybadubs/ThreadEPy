@@ -1006,68 +1006,6 @@ def run_simulations_for_gui(config, gui_queue):
                 except queue.Empty:
                     pass
 
-            # Check for dead/stuck processes
-            dead_processes = []
-            for name, process_info in active_processes.items():
-                process = process_info['process']
-
-                # Check if process is still alive
-                if not process.is_alive():
-                    dead_processes.append(name)
-                    gui_queue.put({
-                        'type': 'LOG',
-                        'message': f'Process for {name} is no longer alive - marking completed',
-                        'tag': 'warning'
-                    })
-
-                    # Update status to failed if not already completed
-                    if name in status_tracker.simulations:
-                        info = status_tracker.simulations[name]
-                        if info['status'] not in ['Completed', 'Failed']:
-                            status_tracker.update_simulation(name,
-                                                            status='Failed (Process died)',
-                                                            progress=100,
-                                                            end_time=current_time)
-
-            # Remove dead processes
-            for name in dead_processes:
-                if name in active_processes:
-                    process_info = active_processes[name]
-
-                    # Write to CSV if not already written
-                    if name not in csv_written:
-                        info = status_tracker.simulations[name]
-                        if csv_output:
-                            add_simulation_to_csv(process_info['file'], weather_file, info, row_counter, csv_output)
-                            csv_written.add(name)
-                            row_counter += 1
-
-                    del active_processes[name]
-                    completed_count += 1
-
-                    # Start next simulation if available
-                    if waiting_files:
-                        next_idf = waiting_files.pop(0)
-                        next_name = os.path.splitext(os.path.basename(next_idf))[0]
-
-                        process = Process(
-                            target=run_energyplus_simulation,
-                            args=(next_idf, weather_file, eplus_path, update_queue, completed_queue)
-                        )
-                        process.start()
-
-                        active_processes[next_name] = {
-                            'process': process,
-                            'start_time': time.time(),
-                            'file': next_idf
-                        }
-
-                        gui_queue.put({
-                            'type': 'LOG',
-                            'message': f'Started simulation: {next_name}',
-                            'tag': 'info'
-                        })
-
             # Periodic GUI update - send STATUS for all active simulations every 1 second
             current_time = time.time()
             if current_time - last_gui_update >= 1.0:
