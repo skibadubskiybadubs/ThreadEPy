@@ -738,6 +738,419 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_work
             print("  No output files found")
             
     print(f"\nResults CSV has been saved to: {csv_output} ({len(csv_written)} simulations recorded)")
-    
+
     # Keep console open for user to see results
     input("\nPress Enter to exit...")
+
+
+def run_simulations_for_gui(config, gui_queue):
+    """
+    Run EnergyPlus simulations for GUI - sends updates to GUI queue instead of Rich display.
+
+    Args:
+        config (dict): Configuration with keys: idf_files, epw_file, eplus_path, max_workers, csv_output
+        gui_queue (Queue): Queue for sending updates to GUI
+    """
+    idf_files = config['idf_files']
+    weather_file = config['epw_file']
+    eplus_path = config['eplus_path']
+    max_workers = config['max_workers']
+    csv_output = config['csv_output']
+
+    if not idf_files:
+        gui_queue.put({'type': 'LOG', 'message': 'No IDF files provided', 'tag': 'error'})
+        return
+
+    if not weather_file or not os.path.exists(weather_file):
+        gui_queue.put({'type': 'LOG', 'message': 'Invalid weather file provided', 'tag': 'error'})
+        return
+
+    # Resolve the CSV output path
+    csv_output = resolve_csv_path(csv_output, idf_files)
+
+    # Initialize CSV file with headers
+    if csv_output:
+        with open(csv_output, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "#", "Job_ID", "WeatherFile", "ModelFile", "Progress(1-Completed/0-Failed)",
+                "Message", "Warnings", "Errors", "Hours", "Minutes", "Seconds"
+            ])
+        gui_queue.put({'type': 'LOG', 'message': f'Initialized CSV results file: {csv_output}', 'tag': 'info'})
+
+    # Determine the number of logical processors
+    available_cores = psutil.cpu_count(logical=True)
+
+    # Set the maximum number of workers
+    if max_workers is None:
+        max_workers = max(1, available_cores - 1)
+    max_workers = min(max_workers, len(idf_files))
+
+    # Clean up old .err files from previous runs to avoid conflicts
+    cleaned_count = 0
+    for idf_file in idf_files:
+        idf_dir = os.path.dirname(idf_file)
+        idf_basename = os.path.splitext(os.path.basename(idf_file))[0]
+        err_file = os.path.join(idf_dir, f"{idf_basename}out.err")
+
+        if os.path.exists(err_file):
+            try:
+                os.remove(err_file)
+                cleaned_count += 1
+            except Exception as e:
+                gui_queue.put({
+                    'type': 'LOG',
+                    'message': f'Warning: Could not delete old .err file for {idf_basename}: {str(e)}',
+                    'tag': 'warning'
+                })
+
+    if cleaned_count > 0:
+        gui_queue.put({
+            'type': 'LOG',
+            'message': f'Cleaned up {cleaned_count} old .err file(s) from previous runs',
+            'tag': 'info'
+        })
+
+    gui_queue.put({'type': 'LOG', 'message': f'Found {len(idf_files)} IDF files', 'tag': 'info'})
+    gui_queue.put({'type': 'LOG', 'message': f'Using weather file: {os.path.basename(weather_file)}', 'tag': 'info'})
+    gui_queue.put({'type': 'LOG', 'message': f'Using EnergyPlus: {eplus_path}', 'tag': 'info'})
+    gui_queue.put({'type': 'LOG', 'message': f'Running with {max_workers} parallel processes (out of {available_cores} logical processors)', 'tag': 'info'})
+    gui_queue.put({'type': 'LOG', 'message': '', 'tag': 'info'})
+
+    # Create a status tracker
+    status_tracker = SimulationStatus()
+
+    # Register all simulations with status "Waiting"
+    for idf_file in idf_files:
+        idf_name = os.path.splitext(os.path.basename(idf_file))[0]
+        status_tracker.add_simulation(idf_name)
+        gui_queue.put({
+            'type': 'STATUS',
+            'name': idf_name,
+            'status': 'Waiting',
+            'progress': 0,
+            'cpu': 0.0,
+            'memory': 0.0,
+            'warnings': 0,
+            'errors': 0,
+            'runtime': '0m 0s'
+        })
+
+    # Create a manager for sharing data between processes
+    try:
+        multiprocessing.set_start_method('spawn', force=True)
+    except RuntimeError:
+        pass
+
+    manager = Manager()
+    update_queue = manager.Queue()
+    completed_queue = manager.Queue()
+
+    # Start update process
+    update_thread = threading.Thread(target=update_process, args=(update_queue, status_tracker))
+    update_thread.daemon = True
+    update_thread.start()
+
+    # Prepare process tracking
+    active_processes = {}
+    waiting_files = list(idf_files)
+    completed_count = 0
+    total = len(idf_files)
+    last_check_time = time.time()
+    row_counter = 0
+    csv_written = set()
+
+    # Start initial batch of simulations
+    for i in range(min(max_workers, len(waiting_files))):
+        idf_file = waiting_files.pop(0)
+        idf_name = os.path.splitext(os.path.basename(idf_file))[0]
+
+        process = Process(
+            target=run_energyplus_simulation,
+            args=(idf_file, weather_file, eplus_path, update_queue, completed_queue)
+        )
+        process.start()
+
+        active_processes[idf_name] = {
+            'process': process,
+            'start_time': time.time(),
+            'file': idf_file
+        }
+
+        gui_queue.put({
+            'type': 'LOG',
+            'message': f'Started simulation: {idf_name}',
+            'tag': 'info'
+        })
+
+    # Main monitoring loop
+    last_gui_update = time.time()
+    try:
+        while active_processes or waiting_files:
+            # Process update queue messages
+            try:
+                while True:
+                    message = update_queue.get_nowait()
+                    if message == "DONE":
+                        break
+
+                    message_type = message[0]
+
+                    if message_type == "UPDATE":
+                        idf_name = message[1]
+                        updates = message[2]
+
+                        # Update status tracker
+                        status_tracker.update_simulation(idf_name, **updates)
+
+                        # Send status update to GUI
+                        if idf_name in status_tracker.simulations:
+                            info = status_tracker.simulations[idf_name]
+
+                            # Calculate runtime
+                            runtime_str = '0m 0s'
+                            if info['start_time']:
+                                if info['end_time']:
+                                    runtime = info['end_time'] - info['start_time']
+                                else:
+                                    runtime = time.time() - info['start_time']
+                                runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
+
+                            gui_queue.put({
+                                'type': 'STATUS',
+                                'name': idf_name,
+                                'status': info['status'],
+                                'progress': info['progress'],
+                                'cpu': info.get('cpu', 0.0),
+                                'memory': info.get('memory', 0.0),
+                                'warnings': info.get('warnings', 0),
+                                'errors': info.get('errors', 0),
+                                'runtime': runtime_str
+                            })
+
+                        # Handle failures
+                        is_failure = 'status' in updates and ('Failed' in updates['status'])
+                        if is_failure and 'end_time' in updates and idf_name not in csv_written and idf_name in active_processes:
+                            info = status_tracker.simulations[idf_name]
+                            if csv_output:
+                                add_simulation_to_csv(active_processes[idf_name]['file'], weather_file, info, row_counter, csv_output)
+                                csv_written.add(idf_name)
+                                row_counter += 1
+
+                    elif message_type == "LOG":
+                        idf_name = message[1]
+                        log_msg = message[2]
+                        gui_queue.put({
+                            'type': 'LOG',
+                            'name': idf_name,
+                            'message': log_msg,
+                            'tag': 'info'
+                        })
+
+            except queue.Empty:
+                pass
+
+            # Check for completed simulations
+            current_time = time.time()
+            if current_time - last_check_time >= 1.0:
+                last_check_time = current_time
+
+                try:
+                    while True:
+                        completed_name = completed_queue.get_nowait()
+
+                        if completed_name in active_processes:
+                            process_info = active_processes[completed_name]
+                            process_info['process'].join(timeout=0.1)
+
+                            # Write to CSV
+                            if completed_name not in csv_written:
+                                info = status_tracker.simulations[completed_name]
+                                if csv_output:
+                                    add_simulation_to_csv(process_info['file'], weather_file, info, row_counter, csv_output)
+                                    csv_written.add(completed_name)
+                                    row_counter += 1
+
+                            del active_processes[completed_name]
+                            completed_count += 1
+
+                            gui_queue.put({
+                                'type': 'LOG',
+                                'message': f'Completed: {completed_name} ({completed_count}/{total})',
+                                'tag': 'completed'
+                            })
+
+                            # Start next simulation if available
+                            if waiting_files:
+                                next_idf = waiting_files.pop(0)
+                                next_name = os.path.splitext(os.path.basename(next_idf))[0]
+
+                                process = Process(
+                                    target=run_energyplus_simulation,
+                                    args=(next_idf, weather_file, eplus_path, update_queue, completed_queue)
+                                )
+                                process.start()
+
+                                active_processes[next_name] = {
+                                    'process': process,
+                                    'start_time': time.time(),
+                                    'file': next_idf
+                                }
+
+                                gui_queue.put({
+                                    'type': 'LOG',
+                                    'message': f'Started simulation: {next_name}',
+                                    'tag': 'info'
+                                })
+
+                except queue.Empty:
+                    pass
+
+            # Check for dead/stuck processes
+            dead_processes = []
+            for name, process_info in active_processes.items():
+                process = process_info['process']
+
+                # Check if process is still alive
+                if not process.is_alive():
+                    dead_processes.append(name)
+                    gui_queue.put({
+                        'type': 'LOG',
+                        'message': f'Process for {name} is no longer alive - marking completed',
+                        'tag': 'warning'
+                    })
+
+                    # Update status to failed if not already completed
+                    if name in status_tracker.simulations:
+                        info = status_tracker.simulations[name]
+                        if info['status'] not in ['Completed', 'Failed']:
+                            status_tracker.update_simulation(name,
+                                                            status='Failed (Process died)',
+                                                            progress=100,
+                                                            end_time=current_time)
+
+            # Remove dead processes
+            for name in dead_processes:
+                if name in active_processes:
+                    process_info = active_processes[name]
+
+                    # Write to CSV if not already written
+                    if name not in csv_written:
+                        info = status_tracker.simulations[name]
+                        if csv_output:
+                            add_simulation_to_csv(process_info['file'], weather_file, info, row_counter, csv_output)
+                            csv_written.add(name)
+                            row_counter += 1
+
+                    del active_processes[name]
+                    completed_count += 1
+
+                    # Start next simulation if available
+                    if waiting_files:
+                        next_idf = waiting_files.pop(0)
+                        next_name = os.path.splitext(os.path.basename(next_idf))[0]
+
+                        process = Process(
+                            target=run_energyplus_simulation,
+                            args=(next_idf, weather_file, eplus_path, update_queue, completed_queue)
+                        )
+                        process.start()
+
+                        active_processes[next_name] = {
+                            'process': process,
+                            'start_time': time.time(),
+                            'file': next_idf
+                        }
+
+                        gui_queue.put({
+                            'type': 'LOG',
+                            'message': f'Started simulation: {next_name}',
+                            'tag': 'info'
+                        })
+
+            # Periodic GUI update - send STATUS for all active simulations every 1 second
+            current_time = time.time()
+            if current_time - last_gui_update >= 1.0:
+                last_gui_update = current_time
+
+                # Send updated STATUS for all simulations
+                for sim_name in status_tracker.simulations:
+                    info = status_tracker.simulations[sim_name]
+
+                    # Calculate runtime
+                    runtime_str = '0m 0s'
+                    if info['start_time']:
+                        if info['end_time']:
+                            runtime = info['end_time'] - info['start_time']
+                        else:
+                            runtime = current_time - info['start_time']
+                        runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
+
+                    gui_queue.put({
+                        'type': 'STATUS',
+                        'name': sim_name,
+                        'status': info['status'],
+                        'progress': info['progress'],
+                        'cpu': info.get('cpu', 0.0),
+                        'memory': info.get('memory', 0.0),
+                        'warnings': info.get('warnings', 0),
+                        'errors': info.get('errors', 0),
+                        'runtime': runtime_str
+                    })
+
+            time.sleep(0.25)
+
+        # Final summary
+        summary_text = "\nSimulation Summary:\n"
+        summary_text += "-" * 80 + "\n"
+
+        for idf_file in idf_files:
+            idf_name = os.path.splitext(os.path.basename(idf_file))[0]
+            if idf_name in status_tracker.simulations:
+                info = status_tracker.simulations[idf_name]
+                runtime = 0
+                if info['start_time'] and info['end_time']:
+                    runtime = info['end_time'] - info['start_time']
+                runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
+
+                warnings_count, errors_count = parse_err_file(idf_file)
+                if warnings_count > 0 or errors_count > 0:
+                    warnings = warnings_count
+                    errors = errors_count
+                else:
+                    warnings = info['warnings']
+                    errors = info['errors']
+
+                summary_text += f"{idf_name}: {info['status']} in {runtime_str} - Warnings: {warnings}, Errors: {errors}\n"
+
+        summary_text += "-" * 80 + "\n"
+        summary_text += f"\nResults CSV: {csv_output} ({len(csv_written)} simulations recorded)\n"
+
+        gui_queue.put({'type': 'SUMMARY', 'summary': summary_text})
+
+    except Exception as e:
+        gui_queue.put({
+            'type': 'LOG',
+            'message': f'Error during simulation: {str(e)}',
+            'tag': 'error'
+        })
+        gui_queue.put({
+            'type': 'LOG',
+            'message': traceback.format_exc(),
+            'tag': 'error'
+        })
+
+    finally:
+        # Clean up all remaining processes
+        for name, process_info in active_processes.items():
+            process = process_info['process']
+            if process.is_alive():
+                gui_queue.put({
+                    'type': 'LOG',
+                    'message': f'Terminating stuck process: {name}',
+                    'tag': 'warning'
+                })
+                process.terminate()
+                process.join(timeout=2)
+                if process.is_alive():
+                    process.kill()  # Force kill if terminate didn't work
