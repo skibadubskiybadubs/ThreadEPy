@@ -1047,9 +1047,31 @@ def run_simulations_for_gui(config, gui_queue, stop_event=None, active_processes
 
             time.sleep(0.25)
 
-        # Final summary
+        # Mark any still-running simulations as "Stopped" if stop was requested
+        if stop_event and stop_event.is_set():
+            for sim_name in status_tracker.simulations:
+                info = status_tracker.simulations[sim_name]
+                if info['status'] in ['Running', 'Initializing', 'Waiting']:
+                    status_tracker.update_simulation(sim_name, status='Stopped', end_time=time.time())
+                    # Send final status update to GUI
+                    runtime_str = '0m 0s'
+                    if info['start_time']:
+                        runtime = time.time() - info['start_time']
+                        runtime_str = f"{int(runtime // 60)}m {int(runtime % 60)}s"
+                    gui_queue.put({
+                        'type': 'STATUS',
+                        'name': sim_name,
+                        'status': 'Stopped',
+                        'progress': info['progress'],
+                        'cpu': 0.0,
+                        'memory': 0.0,
+                        'warnings': info.get('warnings', 0),
+                        'errors': info.get('errors', 0),
+                        'runtime': runtime_str
+                    })
+
+        # Final summary (without separator lines)
         summary_text = "\nSimulation Summary:\n"
-        summary_text += "-" * 80 + "\n"
 
         for idf_file in idf_files:
             idf_name = os.path.splitext(os.path.basename(idf_file))[0]
@@ -1070,7 +1092,6 @@ def run_simulations_for_gui(config, gui_queue, stop_event=None, active_processes
 
                 summary_text += f"{idf_name}: {info['status']} in {runtime_str} - Warnings: {warnings}, Errors: {errors}\n"
 
-        summary_text += "-" * 80 + "\n"
         summary_text += f"\nResults CSV: {csv_output} ({len(csv_written)} simulations recorded)\n"
 
         gui_queue.put({'type': 'SUMMARY', 'summary': summary_text})

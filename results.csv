@@ -1,2 +1,0 @@
-#,Job_ID,WeatherFile,ModelFile,Progress(1-Completed/0-Failed),Message,Warnings,Errors,Hours,Minutes,Seconds
-0,energymodel3,CAN_ON_TORONTO-CITY-CENTRE_6158359_CWEC.epw,energymodel3.idf,1,EnergyPlus Completed Successfully,0,0,00,15,12

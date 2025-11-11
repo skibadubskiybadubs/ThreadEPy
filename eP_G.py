@@ -424,10 +424,10 @@ class EnergyPlusGUI:
         self.action_btn = ttk.Button(self.action_frame, text="⌞   ▶   ⌝", command=self.toggle_simulation, style='Action.TButton')
         self.action_btn.grid(row=0, column=0, padx=(0, 10), sticky=tk.W)
 
-        # Chunked progress bar using Canvas (old Windows style)
+        # Chunked progress bar using Canvas (old Windows style) - height matches action button
         self.progress_bar = tk.Canvas(
             self.action_frame,
-            height=25,
+            height=18,
             bg=UI_COLORS['bg'],
             highlightbackground=UI_COLORS['select_bg'],
             highlightcolor=UI_COLORS['select_bg'],
@@ -455,7 +455,7 @@ class EnergyPlusGUI:
             width = 300  # Default width
 
         # Chunk settings
-        chunk_width = 20
+        chunk_width = 16
         chunk_spacing = 2
         chunk_height = height - 4  # Leave 2px padding top and bottom
 
@@ -517,6 +517,7 @@ class EnergyPlusGUI:
         self.output_text.tag_config('running', foreground='#89a65e')  # Green for running
         self.output_text.tag_config('completed', foreground='#6f9bd3')  # Blue for completed
         self.output_text.tag_config('failed', foreground='#bc6b6a')  # Red for failed
+        self.output_text.tag_config('stopped', foreground='#9197AE')  # Grey for stopped
         self.output_text.tag_config('warning', foreground='#ffd166')  # Yellow for warnings
         self.output_text.tag_config('error', foreground='#bc6b6a')  # Red for errors
         self.output_text.tag_config('info', foreground='#9197AE')  # Grey for info
@@ -749,8 +750,8 @@ class EnergyPlusGUI:
                         logs_buffer.append(('', f"\n{summary}", 'header'))
 
                     elif msg_type == 'COMPLETE':
-                        # Simulation complete
-                        logs_buffer.append(('', f"\n{'='*100}\n  All Simulations Complete!\n{'='*100}\n", 'completed'))
+                        # Simulation complete (without separator lines)
+                        logs_buffer.append(('', f"\nAll Simulations Complete!\n", 'completed'))
                         self.simulation_running = False
                         self.simulation_completed = True
                         # Change button to Return mode (mirrored arrow)
@@ -812,6 +813,9 @@ class EnergyPlusGUI:
             elif 'Failed' in status:
                 symbol = '✖'
                 status_tag = 'failed'
+            elif status == 'Stopped':
+                symbol = '■'
+                status_tag = 'stopped'
             else:
                 symbol = '⏸'  # Waiting/paused
                 status_tag = 'waiting'
