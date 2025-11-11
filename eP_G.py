@@ -11,6 +11,7 @@ from tkinter import filedialog, messagebox, ttk
 from multiprocessing import cpu_count
 import threading
 import queue
+import json
 
 from eP_C import APP_NAME, APP_NAME_ASCII, VERSION, DEFAULT_EPLUS_PATH, UI_COLORS
 from eP_U import save_config_to_temp
@@ -31,13 +32,22 @@ class EnergyPlusGUI:
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         self.setup_dark_theme()
-        
+
+        # Config file path
+        self.config_file = os.path.join(os.path.expanduser("~"), ".threadepy_config.json")
+
         # Variables to store user selections
         self.idf_folder = tk.StringVar()
         self.epw_file = tk.StringVar()
         self.eplus_folder = tk.StringVar()
         self.max_workers = tk.IntVar(value=max(1, cpu_count() - 1))
         self.csv_output = tk.StringVar(value="simulation_results.csv")
+
+        # Add trace to idf_folder to auto-update file list when folder changes
+        self.idf_folder.trace_add('write', lambda *args: self.on_idf_folder_changed())
+
+        # Load previous settings (this will now trigger the trace callback)
+        self.load_settings()
         
         # Variables for IDF file selection
         self.idf_files = []
@@ -52,6 +62,7 @@ class EnergyPlusGUI:
         self.output_text = None
         self.output_frame = None
         self.simulation_running = False
+        self.simulation_completed = False  # Track if simulations are done (for Return button)
         self.simulation_thread = None
         self.simulation_status = {}  # Track status of each simulation
         self.status_start_line = 4  # Line where simulation statuses start (after header)
@@ -60,6 +71,10 @@ class EnergyPlusGUI:
         self.completed_simulations = 0  # Number of completed simulations
 
         self.create_widgets()
+
+        # Load IDF files if folder path was loaded from settings
+        if self.idf_folder.get():
+            self.on_idf_folder_changed()
 
     def on_window_resize(self, event):
         if event.widget == self.root:
@@ -330,18 +345,24 @@ class EnergyPlusGUI:
         # Configure settings_frame grid to match content_frame proportions
         settings_frame.columnconfigure(0, weight=0)  # Labels
         settings_frame.columnconfigure(1, weight=0)  # Max workers spinbox
-        settings_frame.columnconfigure(2, weight=0)  # CSV label
-        settings_frame.columnconfigure(3, weight=1)  # CSV entry - expands
-        settings_frame.columnconfigure(4, weight=0)  # Spacer to match Browse button column
+        settings_frame.columnconfigure(2, weight=0)  # CPU count indicator
+        settings_frame.columnconfigure(3, weight=0)  # CSV label
+        settings_frame.columnconfigure(4, weight=1)  # CSV entry - expands
+        settings_frame.columnconfigure(5, weight=0)  # Spacer to match Browse button column
 
         # Compact settings layout
         ttk.Label(settings_frame, text="Max Workers:", style='Dark.TLabel').grid(
             row=0, column=0, sticky=tk.W, padx=10, pady=6)
         ttk.Spinbox(settings_frame, from_=1, to=cpu_count(), textvariable=self.max_workers,
-                    width=5, style='Dark.TSpinbox').grid(row=0, column=1, padx=5, pady=6, sticky=tk.W)
+                    width=2, style='Dark.TSpinbox').grid(row=0, column=1, padx=(5, 2), pady=6, sticky=tk.W)
+
+        # Add CPU count indicator in its own column
+        available_cpus = cpu_count()
+        ttk.Label(settings_frame, text=f"/{available_cpus}", style='Dark.TLabel').grid(
+            row=0, column=2, sticky=tk.W, padx=(0, 5), pady=6)
 
         ttk.Label(settings_frame, text="CSV Output:", style='Dark.TLabel').grid(
-            row=0, column=2, sticky=tk.W, padx=(30, 10), pady=6)
+            row=0, column=3, sticky=tk.W, padx=(30, 10), pady=6)
         csv_entry = tk.Entry(settings_frame, textvariable=self.csv_output,
                              bg=UI_COLORS['entry_bg'], fg=UI_COLORS['entry_fg'],
                              insertbackground=UI_COLORS['entry_fg'],
@@ -349,19 +370,19 @@ class EnergyPlusGUI:
                              highlightcolor=UI_COLORS['select_bg'],
                              highlightthickness=1,
                              borderwidth=0, relief='flat')
-        csv_entry.grid(row=0, column=3, sticky=(tk.W, tk.E), padx=(0, 0), pady=6)
+        csv_entry.grid(row=0, column=4, sticky=(tk.W, tk.E), padx=(0, 0), pady=6)
 
-        # Add a spacer frame in column 4 to reserve space matching the Browse button width
+        # Add a spacer frame in column 5 to reserve space matching the Browse button width
         # Create a dummy button to get exact width measurement (including padding)
         dummy_btn = ttk.Button(settings_frame, text=bt_exit, style='Browse.TButton')
-        dummy_btn.grid(row=0, column=4, pady=row_pady, sticky=tk.E)
+        dummy_btn.grid(row=0, column=5, pady=row_pady, sticky=tk.E)
         self.root.update_idletasks()  # Force layout calculation
         button_width = dummy_btn.winfo_reqwidth()
         dummy_btn.grid_forget()  # Remove dummy button
 
         # Now create spacer with exact width matching the Browse button
         spacer = ttk.Frame(settings_frame, width=button_width, style='Dark.TFrame')
-        spacer.grid(row=0, column=4, padx=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        spacer.grid(row=0, column=5, pady=row_pady, sticky=(tk.N, tk.S, tk.E, tk.W))
         spacer.grid_propagate(False)
         
         # IDF Files Selection Frame
@@ -507,6 +528,12 @@ class EnergyPlusGUI:
         folder = filedialog.askdirectory(title="Select folder containing IDF files")
         if folder:
             self.idf_folder.set(folder)
+            # Note: load_idf_files() will be called automatically via trace callback
+
+    def on_idf_folder_changed(self):
+        """Called when IDF folder path changes (manual edit or programmatic)"""
+        # Only update if the scrollable_frame exists (widgets are created)
+        if hasattr(self, 'scrollable_frame'):
             self.load_idf_files()
             self.check_for_epw_file()
             
@@ -622,6 +649,7 @@ class EnergyPlusGUI:
 
         # Mark simulation as running
         self.simulation_running = True
+        self.simulation_completed = False  # Reset completion flag
         self.simulation_status = {}
         self.log_messages = []  # Reset logs
         self.total_simulations = len(self.selected_files)
@@ -711,8 +739,9 @@ class EnergyPlusGUI:
                         # Simulation complete
                         logs_buffer.append(('', f"\n{'='*100}\n  All Simulations Complete!\n{'='*100}\n", 'completed'))
                         self.simulation_running = False
-                        # Change button back to Start mode
-                        self.action_btn.config(text="⌞   ▶   ⌝")
+                        self.simulation_completed = True
+                        # Change button to Return mode (mirrored arrow)
+                        self.action_btn.config(text="⌞   ◀   ⌝")
 
                     messages_processed += 1
 
@@ -839,23 +868,33 @@ class EnergyPlusGUI:
             self.simulation_running = False
 
     def toggle_simulation(self):
-        """Toggle between starting and stopping simulations"""
-        if self.simulation_running:
+        """Toggle between starting, stopping, and returning to start screen"""
+        if self.simulation_completed:
+            # Return to start screen (simulation is done)
+            self.simulation_completed = False
+            self.action_btn.config(text="⌞   ▶   ⌝")
+            # Reset progress bar
+            self.update_chunked_progress(0)
+            # Clear simulation status
+            self.simulation_status = {}
+            self.log_messages = []
+            self.total_simulations = 0
+            self.completed_simulations = 0
+            # Show input UI again, hide output
+            self.output_frame.grid_remove()
+            self.content_frame.grid()
+        elif self.simulation_running:
             # Stop running simulations
             if messagebox.askyesno("Stop Simulations", "Are you sure you want to stop all running simulations?"):
                 self.simulation_running = False
+                self.simulation_completed = True  # Mark as completed (stopped)
                 self.output_queue.put({
                     'type': 'LOG',
                     'message': 'User requested simulation stop. Terminating processes...',
                     'tag': 'warning'
                 })
-                # Change button back to Start mode
-                self.action_btn.config(text="⌞   ▶   ⌝")
-                # Reset progress bar
-                self.update_chunked_progress(0)
-                # Show input UI again, hide output
-                self.output_frame.grid_remove()
-                self.content_frame.grid()
+                # Change button to Return mode
+                self.action_btn.config(text="⌞   ◀   ⌝")
         else:
             # Start simulations
             self.start_simulations()
@@ -866,9 +905,37 @@ class EnergyPlusGUI:
         self.root.quit()
         self.root.destroy()
         sys.exit(0)
-    
+
+    def load_settings(self):
+        """Load previous settings from config file"""
+        try:
+            if os.path.exists(self.config_file):
+                with open(self.config_file, 'r') as f:
+                    config = json.load(f)
+                    self.idf_folder.set(config.get('idf_folder', ''))
+                    self.epw_file.set(config.get('epw_file', ''))
+                    self.eplus_folder.set(config.get('eplus_folder', DEFAULT_EPLUS_PATH))
+        except:
+            # If config is corrupted or can't be read, just use defaults
+            pass
+
+    def save_settings(self):
+        """Save current settings to config file"""
+        try:
+            config = {
+                'idf_folder': self.idf_folder.get(),
+                'epw_file': self.epw_file.get(),
+                'eplus_folder': self.eplus_folder.get()
+            }
+            with open(self.config_file, 'w') as f:
+                json.dump(config, f, indent=2)
+        except:
+            # Silently fail if can't save
+            pass
+
     def on_closing(self):
         """window closing event"""
+        self.save_settings()
         self.result = None
         self.root.quit()
         self.root.destroy()
