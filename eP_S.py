@@ -734,13 +734,15 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_work
     input("\nPress Enter to exit...")
 
 
-def run_simulations_for_gui(config, gui_queue):
+def run_simulations_for_gui(config, gui_queue, stop_event=None, active_processes_list=None):
     """
     Run EnergyPlus simulations for GUI - sends updates to GUI queue instead of Rich display.
 
     Args:
         config (dict): Configuration with keys: idf_files, epw_file, eplus_path, max_workers, csv_output
         gui_queue (Queue): Queue for sending updates to GUI
+        stop_event (threading.Event): Event to signal simulation stop
+        active_processes_list (list): List to track active multiprocessing.Process objects
     """
     idf_files = config['idf_files']
     weather_file = config['epw_file']
@@ -868,6 +870,10 @@ def run_simulations_for_gui(config, gui_queue):
             'file': idf_file
         }
 
+        # Track process in the GUI's list for cleanup
+        if active_processes_list is not None:
+            active_processes_list.append(process)
+
         gui_queue.put({
             'type': 'LOG',
             'message': f'Started simulation: {idf_name}',
@@ -878,6 +884,14 @@ def run_simulations_for_gui(config, gui_queue):
     last_gui_update = time.time()
     try:
         while active_processes or waiting_files:
+            # Check if stop was requested
+            if stop_event and stop_event.is_set():
+                gui_queue.put({
+                    'type': 'LOG',
+                    'message': 'Stop requested - terminating all simulations...',
+                    'tag': 'warning'
+                })
+                break
             # Process update queue messages
             try:
                 while True:
@@ -971,8 +985,8 @@ def run_simulations_for_gui(config, gui_queue):
                                 'tag': 'completed'
                             })
 
-                            # Start next simulation if available
-                            if waiting_files:
+                            # Start next simulation if available (and not stopped)
+                            if waiting_files and not (stop_event and stop_event.is_set()):
                                 next_idf = waiting_files.pop(0)
                                 next_name = os.path.splitext(os.path.basename(next_idf))[0]
 
@@ -987,6 +1001,10 @@ def run_simulations_for_gui(config, gui_queue):
                                     'start_time': time.time(),
                                     'file': next_idf
                                 }
+
+                                # Track process in the GUI's list for cleanup
+                                if active_processes_list is not None:
+                                    active_processes_list.append(process)
 
                                 gui_queue.put({
                                     'type': 'LOG',

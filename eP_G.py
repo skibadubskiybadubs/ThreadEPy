@@ -64,6 +64,8 @@ class EnergyPlusGUI:
         self.simulation_running = False
         self.simulation_completed = False  # Track if simulations are done (for Return button)
         self.simulation_thread = None
+        self.stop_event = None  # Event to signal simulation stop
+        self.active_processes = []  # Track active EnergyPlus processes for cleanup
         self.simulation_status = {}  # Track status of each simulation
         self.status_start_line = 4  # Line where simulation statuses start (after header)
         self.log_messages = []  # Store log messages separately
@@ -647,6 +649,13 @@ class EnergyPlusGUI:
         self.content_frame.grid_remove()
         self.output_frame.grid()
 
+        # Clear output queue from any previous runs
+        while not self.output_queue.empty():
+            try:
+                self.output_queue.get_nowait()
+            except:
+                break
+
         # Mark simulation as running
         self.simulation_running = True
         self.simulation_completed = False  # Reset completion flag
@@ -654,6 +663,10 @@ class EnergyPlusGUI:
         self.log_messages = []  # Reset logs
         self.total_simulations = len(self.selected_files)
         self.completed_simulations = 0
+        self.active_processes = []  # Reset process tracking
+
+        # Create stop event for this simulation run
+        self.stop_event = threading.Event()
 
         # Reset and show progress bar
         self.update_chunked_progress(0)
@@ -853,11 +866,12 @@ class EnergyPlusGUI:
                 'tag': 'info'
             })
 
-            # Run simulations with GUI queue
-            run_simulations_for_gui(config, self.output_queue)
+            # Run simulations with GUI queue, stop event, and process list
+            run_simulations_for_gui(config, self.output_queue, self.stop_event, self.active_processes)
 
-            # Send completion message
-            self.output_queue.put({'type': 'COMPLETE'})
+            # Send completion message only if not stopped
+            if not self.stop_event.is_set():
+                self.output_queue.put({'type': 'COMPLETE'})
 
         except Exception as e:
             self.output_queue.put({
@@ -866,6 +880,44 @@ class EnergyPlusGUI:
                 'tag': 'error'
             })
             self.simulation_running = False
+
+    def terminate_all_processes(self):
+        """Terminate all active EnergyPlus processes"""
+        import psutil
+        terminated_count = 0
+
+        # Terminate processes tracked in our list
+        for proc in self.active_processes:
+            try:
+                if proc and proc.is_alive():
+                    proc.terminate()
+                    proc.join(timeout=2)
+                    if proc.is_alive():
+                        proc.kill()
+                    terminated_count += 1
+            except:
+                pass
+
+        # Also kill any remaining energyplus.exe processes
+        try:
+            for proc in psutil.process_iter(['name']):
+                if proc.info['name'] and 'energyplus' in proc.info['name'].lower():
+                    try:
+                        psutil.Process(proc.pid).kill()
+                        terminated_count += 1
+                    except:
+                        pass
+        except:
+            pass
+
+        self.active_processes = []
+
+        if terminated_count > 0:
+            self.output_queue.put({
+                'type': 'LOG',
+                'message': f'Terminated {terminated_count} EnergyPlus process(es)',
+                'tag': 'warning'
+            })
 
     def toggle_simulation(self):
         """Toggle between starting, stopping, and returning to start screen"""
@@ -888,9 +940,17 @@ class EnergyPlusGUI:
             if messagebox.askyesno("Stop Simulations", "Are you sure you want to stop all running simulations?"):
                 self.simulation_running = False
                 self.simulation_completed = True  # Mark as completed (stopped)
+
+                # Signal stop event
+                if self.stop_event:
+                    self.stop_event.set()
+
+                # Terminate all active EnergyPlus processes
+                self.terminate_all_processes()
+
                 self.output_queue.put({
                     'type': 'LOG',
-                    'message': 'User requested simulation stop. Terminating processes...',
+                    'message': 'User requested simulation stop. Terminated all running processes.',
                     'tag': 'warning'
                 })
                 # Change button to Return mode
