@@ -110,7 +110,6 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             '-w', weather_basename, # Weather file
             '-p', idf_name,         # Prefix for output files
             '-d', output_dir,       # Output directory
-            '-a',                   # -a flag disables the annual simulation summary (.end file)
             idf_basename
         ]
         
@@ -127,7 +126,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             bufsize=1,
             universal_newlines=True
         )
-        
+
         # Start a process monitor for CPU and memory
         monitor_thread = threading.Thread(
             target=process_monitor,
@@ -135,18 +134,29 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
         )
         monitor_thread.daemon = True
         monitor_thread.start()
-        
+
         # Variables to track fatal errors
         fatal_error_detected = False
-        
-        # Read output in real-time and send to queue
+
+        # Read output in real-time and send to queue (only important messages to avoid overhead)
         for line in iter(process.stdout.readline, ''):
             if line.strip():
                 try:
-                    update_queue.put(("LOG", idf_name, line.strip()))
-                    
-                    # Check for fatal error indicators in the output
+                    # Only log important messages to avoid massive overhead
                     line_lower = line.lower()
+                    is_important = ('**fatal' in line_lower or
+                                   'fatal error' in line_lower or
+                                   'fatal:' in line_lower or
+                                   '** severe **' in line_lower or
+                                   'initializing' in line_lower or
+                                   'warming up' in line_lower or
+                                   'beginning ' in line_lower or
+                                   'completed successfully' in line_lower)
+
+                    if is_important:
+                        update_queue.put(("LOG", idf_name, line.strip()))
+
+                    # Check for fatal error indicators in the output
                     if '**fatal' in line_lower or 'fatal error' in line_lower or 'fatal:' in line_lower:
                         # Immediately mark as failed
                         update_queue.put(("UPDATE", idf_name, {
@@ -155,19 +165,19 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                             'end_time': time.time()
                         }))
                         fatal_error_detected = True
-                        
+
                         # Signal completion so next simulation can start
                         update_queue.put(("COMPLETED", idf_name))
                         if completed_queue:
                             completed_queue.put(idf_name)
-                        
+
                         # Terminate the process since we detected a fatal error
                         try:
                             process.terminate()
                         except:
                             pass
                         break
-                    
+
                     # Also check for successful completion
                     if 'energyplus completed successfully' in line_lower:
                         update_queue.put(("UPDATE", idf_name, {
@@ -181,7 +191,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                 except:
                     # If the queue is closed, stop sending updates
                     break
-        
+
         # If no fatal error was detected in the logs, wait for the process to complete
         if not fatal_error_detected:
             try:
@@ -194,25 +204,6 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                 except:
                     # If it still doesn't terminate, force kill
                     process.kill()
-            
-            # Update final status based on the return code (only if not already signaled as completed)
-            if process.returncode == 0:
-                update_queue.put(("UPDATE", idf_name, {
-                    'status': 'Completed',
-                    'progress': 100,
-                    'end_time': time.time()
-                }))
-            else:
-                update_queue.put(("UPDATE", idf_name, {
-                    'status': 'Failed (Exit code: {})'.format(process.returncode),
-                    'progress': 100,  # Mark as 100% to show it's done
-                    'end_time': time.time()
-                }))
-            
-            # Signal that this simulation is complete (for job scheduling)
-            update_queue.put(("COMPLETED", idf_name))
-            if completed_queue:
-                completed_queue.put(idf_name)
         
         # Change back to the original directory
         os.chdir(original_dir)

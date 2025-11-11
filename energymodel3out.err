@@ -1,0 +1,974 @@
+Program Version,EnergyPlus, Version 23.2.0-7636e6b3e9, YMD=2025.11.10 18:14,
+   ************* Beginning Zone Sizing Calculations
+   ** Warning ** Weather file location will be used rather than entered (IDF) Location object.
+   **   ~~~   ** ..Location object=TORONTO-CITY CENTRE_ON_CAN DESIGN_CONDITIONS
+   **   ~~~   ** ..Weather File Location=TORONTO CITY CENTRE ON CAN CWEC2011 WMO#=712650
+   **   ~~~   ** ..due to location differences, Latitude difference=[4.00E-002] degrees, Longitude difference=[1.00E-002] degrees.
+   **   ~~~   ** ..Time Zone difference=[0.0] hour(s), Elevation difference=[31.73] percent, [35.70] meters.
+   ** Warning ** CheckConvexity: Zone="132_LVL1_AMENITY", Surface="132_AMENITY_35F4D366..FACE13_0" is non-convex.
+   **   ~~~   ** ...vertex 5 to vertex 6 to vertex 7
+   **   ~~~   ** ...vertex 5=[8.47,-1.59,5.40]
+   **   ~~~   ** ...vertex 6=[5.46,-0.50,5.40]
+   **   ~~~   ** ...vertex 7=[6.01,1.01,5.40]
+   ** Warning ** CheckConvexity: Zone="198_LVL4_SUITES", Surface="198_SUITES_5FB88CC5..FACE5_0" is non-convex.
+   **   ~~~   ** ...vertex 3 to vertex 4 to vertex 5
+   **   ~~~   ** ...vertex 3=[17.03,40.94,11.90]
+   **   ~~~   ** ...vertex 4=[18.84,45.92,11.90]
+   **   ~~~   ** ...vertex 5=[27.13,42.91,11.90]
+   ** Warning ** CheckConvexity: Zone="219_LVL6_CORRIDOR", Surface="219_CORRIDOR_B9E04E93..FACE30_0" is non-convex.
+   **   ~~~   ** ...vertex 2 to vertex 3 to vertex 4
+   **   ~~~   ** ...vertex 2=[16.06,7.56,18.50]
+   **   ~~~   ** ...vertex 3=[15.87,7.63,18.50]
+   **   ~~~   ** ...vertex 4=[14.98,5.19,18.50]
+   ** Warning ** CheckConvexity: Zone="220_LVL6_SUITES", Surface="220_SUITES_3C8CCA2C..FACE7" is non-convex.
+   **   ~~~   ** ...vertex 5 to vertex 6 to vertex 1
+   **   ~~~   ** ...vertex 5=[14.98,5.19,18.50]
+   **   ~~~   ** ...vertex 6=[14.70,4.44,18.50]
+   **   ~~~   ** ...vertex 1=[11.13,5.74,18.50]
+   ** Warning ** CheckConvexity: Zone="222_LVL6_SUITES", Surface="222_SUITES_2784883F..FACE9_0" is non-convex.
+   **   ~~~   ** ...vertex 3 to vertex 4 to vertex 5
+   **   ~~~   ** ...vertex 3=[24.34,42.33,18.50]
+   **   ~~~   ** ...vertex 4=[24.82,43.64,18.50]
+   **   ~~~   ** ...vertex 5=[29.81,41.27,18.50]
+   ** Warning ** CheckConvexity: Zone="223_LVL6_SUITES", Surface="223_SUITES_092BDC84..FACE5_0" is non-convex.
+   **   ~~~   ** ...vertex 2 to vertex 3 to vertex 4
+   **   ~~~   ** ...vertex 2=[29.81,41.27,18.50]
+   **   ~~~   ** ...vertex 3=[32.44,40.02,18.50]
+   **   ~~~   ** ...vertex 4=[31.89,38.49,18.50]
+   ** Warning ** CheckConvexity: Zone="225_LVL6_SUITES", Surface="225_SUITES_FE0809C1..FACE9" is non-convex.
+   **   ~~~   ** ...vertex 4 to vertex 5 to vertex 6
+   **   ~~~   ** ...vertex 4=[9.01,-8.81E-002,18.50]
+   **   ~~~   ** ...vertex 5=[11.13,5.74,18.50]
+   **   ~~~   ** ...vertex 6=[14.70,4.44,18.50]
+   ** Warning ** CheckConvexity: Zone="227_LVL6_SUITES", Surface="227_SUITES_E3C429A5..FACE7" is non-convex.
+   **   ~~~   ** ...vertex 5 to vertex 6 to vertex 1
+   **   ~~~   ** ...vertex 5=[27.97,10.78,18.50]
+   **   ~~~   ** ...vertex 6=[27.26,8.81,18.50]
+   **   ~~~   ** ...vertex 1=[24.16,9.94,18.50]
+   ** Warning ** CheckConvexity: Zone="299_LVL41_SUITES", Surface="299_SUITES_928B0975..FACE10_0" is non-convex.
+   **   ~~~   ** ...vertex 2 to vertex 3 to vertex 4
+   **   ~~~   ** ...vertex 2=[6.19,11.16,37.55]
+   **   ~~~   ** ...vertex 3=[9.29,10.03,37.55]
+   **   ~~~   ** ...vertex 4=[8.40,7.58,37.55]
+   ** Warning ** CheckConvexity: Zone="324_LVL43_SUITES", Surface="324_SUITES_3DFD5E09..FACE11_0" is non-convex.
+   **   ~~~   ** ...vertex 4 to vertex 5 to vertex 6
+   **   ~~~   ** ...vertex 4=[23.22,39.23,44.00]
+   **   ~~~   ** ...vertex 5=[20.77,40.11,44.00]
+   **   ~~~   ** ...vertex 6=[21.90,43.22,44.00]
+   ** Warning ** CheckConvexity: Zone="343_LVL45_CORRIDOR", Surface="343_CORRIDOR_DF92075E..FACE13" is non-convex.
+   **   ~~~   ** ...vertex 2 to vertex 3 to vertex 4
+   **   ~~~   ** ...vertex 2=[23.76,27.85,53.15]
+   **   ~~~   ** ...vertex 3=[20.94,28.88,53.15]
+   **   ~~~   ** ...vertex 4=[19.81,25.78,53.15]
+   ** Warning ** CheckConvexity: Zone="344_LVL45_MECH", Surface="344_MECH_54525A01..FACE7" is non-convex.
+   **   ~~~   ** ...vertex 4 to vertex 5 to vertex 6
+   **   ~~~   ** ...vertex 4=[23.71,36.49,53.15]
+   **   ~~~   ** ...vertex 5=[22.40,36.97,53.15]
+   **   ~~~   ** ...vertex 6=[22.57,37.44,53.15]
+   ** Warning ** CheckConvexity: Zone="345_LVL45_MECH", Surface="345_MECH_0A6491FD..FACE13" is non-convex.
+   **   ~~~   ** ...vertex 4 to vertex 5 to vertex 6
+   **   ~~~   ** ...vertex 4=[12.03,14.35,53.15]
+   **   ~~~   ** ...vertex 5=[13.20,17.54,53.15]
+   **   ~~~   ** ...vertex 6=[18.93,15.46,53.15]
+   ** Warning ** CheckConvexity: Zone="346_LVL45_MECH", Surface="346_MECH_EC38C0F9..FACE8" is non-convex.
+   **   ~~~   ** ...vertex 2 to vertex 3 to vertex 4
+   **   ~~~   ** ...vertex 2=[24.13,24.21,53.15]
+   **   ~~~   ** ...vertex 3=[26.95,23.18,53.15]
+   **   ~~~   ** ...vertex 4=[24.73,17.07,53.15]
+   ** Warning ** GetSurfaceData: InterZone Surface Areas do not match as expected and might not satisfy conservation of energy:
+   **   ~~~   **   Area=24.2, Multipliers=23, Total Area=556.6 in Surface=249_SUITES_5AE35902..FACE1 Zone=249_LVL8_SUITES
+   **   ~~~   **   Area=24.2, Multipliers=23, Total Area=556.7 in Surface=251_SUITES_183DCE04..FACE5 Zone=251_LVL8_SUITES
+   ** Warning ** ProcessSurfaceVertices: Possible non-planar surface:"249_SUITES_5AE35902..FACE12", Max "out of line"=3.48648E-004 at Vertex # 1
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="130_LVL1_CORRIDOR" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=5.40, Calculated Ceiling Height=5.11, entered height will be used in calculations.
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="135_LVL1_SUITES" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=5.40, Calculated Ceiling Height=4.32, entered height will be used in calculations.
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="144_LVL1_GARBAGE" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=5.40, Calculated Ceiling Height=4.79, entered height will be used in calculations.
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="145_LVL1_STAIR" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=5.40, Calculated Ceiling Height=3.94, entered height will be used in calculations.
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="333_LVL44_AMENITY" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=9.15, Calculated Ceiling Height=5.64, entered height will be used in calculations.
+   ** Warning ** SetUpZoneGeometry: Entered Ceiling Height for Zone="336_LVL44_AMENITY" significantly different from calculated Ceiling Height
+   **   ~~~   ** SetUpZoneGeometry: Entered Ceiling Height=9.15, Calculated Ceiling Height=5.26, entered height will be used in calculations.
+   ** Warning ** CheckUsedConstructions: There are 7 nominally unused constructions in input.
+   **   ~~~   ** Each Unused construction is shown.
+   ************* Construction=TYP WALL 2
+   ************* Construction=EXPOSED FLOOR
+   ************* Construction=P1 CEILING
+   ************* Construction=EXTERIOR DOOR
+   ************* Construction=AIR WALL
+   ************* Construction=EXTSLABCARPET 4IN CLIMATEZONE 1-8
+   ************* Construction=GENERIC AIR BOUNDARY
+   ** Warning ** DetermineShadowingCombinations: Surface="132_AMENITY_35F4D366..FACE13_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="198_SUITES_5FB88CC5..FACE5_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="220_SUITES_3C8CCA2C..FACE7" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="222_SUITES_2784883F..FACE9_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="223_SUITES_092BDC84..FACE5_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="225_SUITES_FE0809C1..FACE9" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="227_SUITES_E3C429A5..FACE7" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="299_SUITES_928B0975..FACE10_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** DetermineShadowingCombinations: Surface="324_SUITES_3DFD5E09..FACE11_0" is a receiving surface and is non-convex.
+   **   ~~~   ** ...Shadowing values may be inaccurate. Check .shd report file for more surface shading details
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="101_LVL-6_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="102_LVL-6_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="103_LVL-6_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="104_LVL-6_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="105_LVL-6_VESTIBULE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="106_LVL-6_STORAGE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="107_LVL-6_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="108_LVL-6_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="109_LVL-6_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="110_LVL-6_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="111_LVL-6_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="112_LVL-1_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="113_LVL-1_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="114_LVL-1_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="115_LVL-1_PARKING NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="116_LVL-1_VESTIBULE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="117_LVL-1_ELEC NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="118_LVL-1_MECH NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="119_LVL-1_MECH NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="120_LVL-1_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="121_LVL-1_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="122_LVL-1_ELEC NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="123_LVL-1_ELEC NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="124_LVL-1_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="125_LVL-1_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="126_LVL-1_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="137_LVL1_WC_PUBLIC NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="138_LVL1_WC_PUBLIC NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="140_LVL1_STORAGE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="146_LVL1_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="148_LVL1_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="149_LVL1_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="150_LVL2_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="169_LVL2_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="170_LVL2_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="184_LVL3_MECH NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="185_LVL3_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="186_LVL3_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="187_LVL3_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="188_LVL3_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="200_LVL4_STORAGE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="201_LVL4_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="202_LVL4_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="203_LVL4_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="204_LVL4_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="214_LVL5_STORAGE NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="215_LVL5_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="216_LVL5_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="217_LVL5_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="218_LVL5_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="228_LVL6_MECH NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="229_LVL6_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="230_LVL6_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="231_LVL6_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="232_LVL6_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="242_LVL7_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="243_LVL7_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="244_LVL7_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="245_LVL8_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="253_LVL8_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="254_LVL8_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="255_LVL8_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="256_LVL8_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="257_LVL31_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="265_LVL31_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="266_LVL31_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="267_LVL31_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="268_LVL31_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="269_LVL33_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="277_LVL33_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="278_LVL33_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="279_LVL33_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="280_LVL33_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="281_LVL34_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="290_LVL34_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="291_LVL34_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="292_LVL34_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="293_LVL34_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="294_LVL41_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="303_LVL41_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="304_LVL41_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="305_LVL41_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="306_LVL41_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="307_LVL42_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="315_LVL42_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="316_LVL42_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="317_LVL42_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="318_LVL42_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="319_LVL43_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="327_LVL43_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="328_LVL43_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="329_LVL43_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="330_LVL43_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="331_LVL44_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="339_LVL44_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="340_LVL44_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="341_LVL44_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="342_LVL44_VOID NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="343_LVL45_CORRIDOR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="347_LVL45_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="348_LVL45_STAIR NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="349_LVL45_ELEV NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GetSimpleAirModelInputs: ZoneInfiltration:DesignFlowRate="350_LVL45_ELEV NECB INF", Design Flow Rate Calculation Method specifies Flow Rate per Exterior Surface Area, but Exterior Wall Area = 0.  0 Infiltration will result.
+   ** Warning ** GeneratorController constructor ElectricLoadCenter:Generators, Availability Schedule for Generator:PVWatts 'PV_SYSTEM' will be be ignored (runs all the time).
+   ** Warning ** Calculated design cooling load for zone=105_LVL-6_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=105_LVL-6_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=106_LVL-6_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=106_LVL-6_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=116_LVL-1_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=116_LVL-1_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=117_LVL-1_ELEC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=118_LVL-1_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=119_LVL-1_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=119_LVL-1_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=122_LVL-1_ELEC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=123_LVL-1_ELEC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=123_LVL-1_ELEC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=127_LVL1_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=128_LVL1_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=129_LVL1_VESTIBULE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=130_LVL1_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=130_LVL1_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=137_LVL1_WC_PUBLIC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=137_LVL1_WC_PUBLIC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=138_LVL1_WC_PUBLIC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=138_LVL1_WC_PUBLIC is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=139_LVL1_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=140_LVL1_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=141_LVL1_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=142_LVL1_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=173_LVL3_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=173_LVL3_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=184_LVL3_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=184_LVL3_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=189_LVL4_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=189_LVL4_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=200_LVL4_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=200_LVL4_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=205_LVL5_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=205_LVL5_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=214_LVL5_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=214_LVL5_STORAGE is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=219_LVL6_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=219_LVL6_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=228_LVL6_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=233_LVL7_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=245_LVL8_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=245_LVL8_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=257_LVL31_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=257_LVL31_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=269_LVL33_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=269_LVL33_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=281_LVL34_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=281_LVL34_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=294_LVL41_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=294_LVL41_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=307_LVL42_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=307_LVL42_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=319_LVL43_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=319_LVL43_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=331_LVL44_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=331_LVL44_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=343_LVL45_CORRIDOR is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=344_LVL45_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=345_LVL45_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design cooling load for zone=346_LVL45_MECH is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ************* Beginning System Sizing Calculations
+   ** Warning ** GetDXCoils: Coil:Cooling:DX:SingleSpeed="105_LVL-6_VESTIBULE PTAC COOLING COIL", invalid
+   **   ~~~   ** ...Part Load Fraction Correlation Curve Name="DX_NECB_EIRFPLR" has out of range values.
+   **   ~~~   ** ...Curve minimum must be >= 0.7, curve min at PLR = 1.00E-002 is 0.201
+   **   ~~~   ** ...Setting curve minimum to 0.7 and simulation continues.
+   ** Warning ** FinalSystemSizing: AirLoop="AHU_1", Requested sizing on Ventilation,
+   **   ~~~   ** but Zone has no design OA Flow. Zone="349_LVL45_ELEV".
+   ** Warning ** FinalSystemSizing: AirLoop="AHU_1", Requested sizing on Ventilation,
+   **   ~~~   ** but Zone has no design OA Flow. Zone="350_LVL45_ELEV".
+   ** Warning ** FinalSystemSizing: AirLoop="AHU_2", Requested sizing on Ventilation,
+   **   ~~~   ** but Zone has no design OA Flow. Zone="117_LVL-1_ELEC".
+   ** Warning ** FinalSystemSizing: AirLoop="AHU_2", Requested sizing on Ventilation,
+   **   ~~~   ** but Zone has no design OA Flow. Zone="143_LVL1_STORAGE".
+   ** Warning ** FinalSystemSizing: AirLoop="AHU_2", Requested sizing on Ventilation,
+   **   ~~~   ** but Zone has no design OA Flow. Zone="144_LVL1_GARBAGE".
+   ************* Beginning Plant Sizing Calculations
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 105_LVL-6_VESTIBULE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 10362.73119
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 105_LVL-6_VESTIBULE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=105_LVL-6_VESTIBULE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "105_LVL-6_VESTIBULE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[1.200E-002], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 105_LVL-6_VESTIBULE BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 106_LVL-6_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 10423.99908
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 106_LVL-6_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=106_LVL-6_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "106_LVL-6_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[1.200E-002], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 106_LVL-6_STORAGE BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 116_LVL-1_VESTIBULE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2072.54624
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 116_LVL-1_VESTIBULE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=116_LVL-1_VESTIBULE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "116_LVL-1_VESTIBULE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 116_LVL-1_VESTIBULE BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeFanCoilUnit: : Potential issue with equipment sizing for ZoneHVAC:FourPipeFanCoil 117_LVL-1_ELEC FAN COIL
+   **   ~~~   ** ...Rated Total Cooling Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity used to size child component set to 0 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 118_LVL-1_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 118_LVL-1_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=118_LVL-1_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "118_LVL-1_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 119_LVL-1_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 119_LVL-1_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=119_LVL-1_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "119_LVL-1_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 119_LVL-1_MECH BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 122_LVL-1_ELEC PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 122_LVL-1_ELEC PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=122_LVL-1_ELEC PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "122_LVL-1_ELEC PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 123_LVL-1_ELEC PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 123_LVL-1_ELEC PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=123_LVL-1_ELEC PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "123_LVL-1_ELEC PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 123_LVL-1_ELEC BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 127_LVL1_VESTIBULE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2065.23696
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 127_LVL1_VESTIBULE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=127_LVL1_VESTIBULE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "127_LVL1_VESTIBULE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 128_LVL1_VESTIBULE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2070.35009
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 128_LVL1_VESTIBULE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=128_LVL1_VESTIBULE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "128_LVL1_VESTIBULE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 129_LVL1_VESTIBULE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2102.10591
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 129_LVL1_VESTIBULE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=129_LVL1_VESTIBULE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "129_LVL1_VESTIBULE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 130_LVL1_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "131_LVL1_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "132_LVL1_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 137_LVL1_WC_PUBLIC PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2099.12657
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 137_LVL1_WC_PUBLIC PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=137_LVL1_WC_PUBLIC PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "137_LVL1_WC_PUBLIC PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 137_LVL1_WC_PUBLIC BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 138_LVL1_WC_PUBLIC PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2061.59433
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 138_LVL1_WC_PUBLIC PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=138_LVL1_WC_PUBLIC PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "138_LVL1_WC_PUBLIC PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 138_LVL1_WC_PUBLIC BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 139_LVL1_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2063.05043
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 139_LVL1_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=139_LVL1_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "139_LVL1_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 140_LVL1_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2090.71341
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 140_LVL1_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=140_LVL1_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "140_LVL1_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 141_LVL1_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 4282.13821
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 141_LVL1_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=141_LVL1_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "141_LVL1_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[4.955E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 142_LVL1_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2094.66734
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 142_LVL1_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=142_LVL1_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "142_LVL1_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "143_LVL1_STORAGE DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.16884
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "144_LVL1_GARBAGE DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.48359
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 173_LVL3_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 184_LVL3_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 184_LVL3_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=184_LVL3_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "184_LVL3_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 184_LVL3_MECH BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 189_LVL4_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 200_LVL4_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 200_LVL4_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=200_LVL4_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "200_LVL4_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 200_LVL4_STORAGE BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 205_LVL5_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 214_LVL5_STORAGE PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2084.79982
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 214_LVL5_STORAGE PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=214_LVL5_STORAGE PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "214_LVL5_STORAGE PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 214_LVL5_STORAGE BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 219_LVL6_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 228_LVL6_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 2086.27627
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 228_LVL6_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=228_LVL6_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "228_LVL6_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[2.400E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "234_LVL7_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 245_LVL8_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 257_LVL31_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 269_LVL33_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 281_LVL34_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 294_LVL41_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 307_LVL42_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 319_LVL43_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ** Warning ** SizeHWBaseboard: Potential issue with equipment sizing for ZoneHVAC:Baseboard:RadiantConvective:Water 331_LVL44_CORRIDOR BASEBOARD HEAT
+   **   ~~~   ** ...Rated Total Heating Capacity = 0.00 [W]
+   **   ~~~   ** ...Capacity passed by parent object to size child component = 0.00 [W]
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "332_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "333_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "334_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "335_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "336_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "337_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "338_LVL44_AMENITY DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.76200
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** Calculated partial vapor pressure is greater than the barometric pressure, so that calculated humidity ratio is invalid (PsyWFnTdpPb).
+   **   ~~~   **  Routine=Unknown, Environment=TORONTO-CITY CENTRE ANN CLG .4% CONDNS DB=>MWB, at Simulation time=07/21 24:00 - 24:10
+   **   ~~~   **  Dew-Point= 101.61 Barometric Pressure= 100405.78
+   **   ~~~   ** Instead, calculated Humidity Ratio at 99.6 (2 degree less) = 173.6637 will be used. Simulation continues.
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water 343_LVL45_CORRIDOR COOLING COIL
+   **   ~~~   ** the outlet chilled water design temperature is greater than the inlet air design temperature.
+   **   ~~~   ** To correct this condition the design chilled water flow rate will be increased from 6.53098E-005
+   **   ~~~   ** to 6.89321E-005 m3/s
+   ** Severe  ** Calculation of cooling coil design UA failed for coil 343_LVL45_CORRIDOR COOLING COIL
+   **   ~~~   **   Bad starting values for UA
+   **   ~~~   **  Coil design UA set to 4752.771391 [W/C]
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 344_LVL45_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 6380.98390
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 344_LVL45_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=344_LVL45_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "344_LVL45_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[7.345E-003], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 345_LVL45_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 12185.43700
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 345_LVL45_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=345_LVL45_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "345_LVL45_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[1.402E-002], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeDXCoil: Potential issue with equipment sizing for Coil:Cooling:DX:SingleSpeed 346_LVL45_MECH PTAC COOLING COIL
+   **   ~~~   ** User-Specified Gross Rated Total Cooling Capacity [W] = 10.00000
+   **   ~~~   ** differs from Design Size Gross Rated Total Cooling Capacity [W] = 9325.11606
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** The Standard Ratings is calculated for Coil:Cooling:DX:SingleSpeed = 346_LVL45_MECH PTAC COOLING COIL but not at the AHRI test condition due to curve out of bound.
+   **   ~~~   **  Review the Standard Ratings calculations in the Engineering Reference for this coil type. Also, use Output:Diagnostics, DisplayExtraWarnings for further guidance.
+   **   ~~~   ** CheckCurveLimitsForStandardRatings: The max and/or min limits specified in the corresponding curve objects
+   **   ~~~   **  do not include the AHRI test conditions required to calculate one or more of the Standard Rating values.
+   **   ~~~   ** Coil:Cooling:DX:SingleSpeed=346_LVL45_MECH PTAC COOLING COIL:  Integrated Energy Efficiency Ratio (IEER) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Total Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = DX_NECB_EIRFT
+   ** Warning ** Sizing: Coil:Cooling:DX:SingleSpeed "346_LVL45_MECH PTAC COOLING COIL": Rated air volume flow rate per watt of rated total cooling capacity is out of range.
+   **   ~~~   ** Min Rated Vol Flow Per Watt=[4.027E-005], Rated Vol Flow Per Watt=[1.073E-002], Max Rated Vol Flow Per Watt=[6.041E-005]. See Input Output Reference Manual for valid range.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "349_LVL45_ELEV DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.40931
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:NoReheat = "350_LVL45_ELEV DOAS AIR TERMINAL".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 1.00000
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.43570
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** SizeDXCoil Coil:Cooling:DX:TwoSpeed AHU_1 COOLING COIL
+   **   ~~~   ** ...High Speed Gross Rated Total Cooling Capacity [W] will be limited by the maximum rated volume flow per rated total capacity ratio.
+   **   ~~~   ** ...DX coil volume flow rate ( m3/s ) = 1.512304
+   **   ~~~   ** ...Requested capacity ( W ) = 36751.999
+   **   ~~~   ** ...Requested flow/capacity ratio ( m3/s/W ) = 4.114E-005
+   **   ~~~   ** ...Maximum flow/capacity ratio ( m3/s/W ) = 3.355E-005
+   **   ~~~   ** ...Adjusted capacity ( W ) = 45076.137
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water AHU_2 COOLING COIL
+   **   ~~~   ** no apparatus dew-point can be found for the initial entering and leaving conditions;
+   **   ~~~   ** the coil outlet design conditions will be changed to correct the problem.
+   **   ~~~   ** The initial design conditions are: Tair,in = 29.0081
+   **   ~~~   **                                    Wair,in = 1.480226E-002
+   **   ~~~   **                                    Twater,in = 7.2200
+   **   ~~~   **                                    Tair,out = 18.9960
+   **   ~~~   **                                    Wair,out = 9.240000E-003
+   **   ~~~   ** The revised design conditions are: Tair,out = 16.1333
+   **   ~~~   **                                    Wair,out = 1.039598E-002
+   ************* SizeBoilerHotWater: Potential issue with equipment sizing for B1
+   **   ~~~   ** User-Specified Nominal Capacity of 1086707.53 [W]
+   **   ~~~   ** differs from Design Size Nominal Capacity of 7260592.85 [W]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeBoilerHotWater: Potential issue with equipment sizing for B2
+   **   ~~~   ** User-Specified Nominal Capacity of 1086707.53 [W]
+   **   ~~~   ** differs from Design Size Nominal Capacity of 7260592.85 [W]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeBoilerHotWater: Potential issue with equipment sizing for B3
+   **   ~~~   ** User-Specified Nominal Capacity of 1086707.53 [W]
+   **   ~~~   ** differs from Design Size Nominal Capacity of 7260592.85 [W]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeChillerElectricEIR: Potential issue with equipment sizing for CH1
+   **   ~~~   ** User-Specified Reference Capacity of 1969437.59 [W]
+   **   ~~~   ** differs from Design Size Reference Capacity of 2322699.35 [W]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** Chiller:Electric:EIR = CH1:  Integrated Part Load Value (IPLV) calculated is not at the AHRI test condition.
+   **   ~~~   **  Check limits in Cooling Capacity Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = WC_CTFGL_NECB_CAPFT
+   **   ~~~   **  Check limits in EIR Function of Temperature Curve, Curve Type = Curve:Biquadratic, Curve Name = WC_CTFGL_NECB_EIRFT
+   ** Warning ** Meter:Custom="TEDI ENERGY", invalid Output Variable or Meter Name="HEATING COIL AIR HEATING ENERGY".
+   **   ~~~   ** ...will not be shown with the Meter results.
+   ** Warning ** Meter:Custom="DHW-ENERGY", invalid Output Variable or Meter Name="WATERSYSTEMS:ELECTRICITY".
+   **   ~~~   ** ...will not be shown with the Meter results.
+   ** Warning ** Meter:Custom="DHW-LOAD", invalid Output Variable or Meter Name="COOLING COIL TOTAL WATER HEATING ENERGY".
+   **   ~~~   ** ...will not be shown with the Meter results.
+   ************* Testing Individual Branch Integrity
+   ************* All Branches passed integrity testing
+   ************* Testing Individual Supply Air Path Integrity
+   ************* All Supply Air Paths passed integrity testing
+   ************* Testing Individual Return Air Path Integrity
+   ************* All Return Air Paths passed integrity testing
+   ************* No node connection errors were found.
+   ************* Beginning Simulation
+   ** Warning ** CoolingTower:VariableSpeed "CT1" - Tower range temperature is outside model boundaries at 1.60E-002.
+   **   ~~~   **  ...Valid range = 1.11 to 22.22. Occurrence info = RUN PERIOD 1, 01/01 11:20 - 11:25
+   **   ~~~   **  ...Tower range temperature passed to the model = 1.60352E-002
+   **   ~~~   **  ...Range temperatures outside model boundaries may not adversely affect tower performance.
+   **   ~~~   **  ...This is not an unexpected occurrence when simulating actual conditions.
+   ** Warning ** CoolingTower:VariableSpeed "CT1" - Tower approach temperature is outside model boundaries at 40.30.
+   **   ~~~   **  ...Valid range = 1.11 to 40.00. Occurrence info = RUN PERIOD 1, 01/20 11:45 - 11:50
+   **   ~~~   **  ...Tower approach temperature passed to the model = 40.29995
+   **   ~~~   **  ...Approach temperatures outside model boundaries may not adversely affect tower performance.
+   **   ~~~   **  ...This is not an unexpected occurrence when simulating actual conditions.
+   ** Warning ** WetBulb not converged after 101 iterations(PsyTwbFnTdbWPb)
+   **   ~~~   **  Routine=Unknown, Environment=RUN PERIOD 1, at Simulation time=04/11 19:00 - 19:03
+   **   ~~~   **  Input Temperature = 4.00
+   **   ~~~   **  Input Humidity Ratio= 2.151135E-003
+   **   ~~~   **  Input Pressure = 101490.00
+   **   ~~~   **  Resultant Temperature= -0.48
+   ** Warning ** Temperature out of range [-100. to 200.] (PsyPsatFnTemp)
+   **   ~~~   **  Routine=PsyTwbFnTdbWPb, Environment=RUN PERIOD 1, at Simulation time=04/14 01:50 - 01:53
+   **   ~~~   **  Input Temperature=-1204.82
+   ************* Simulation Error Summary *************
+   ** Warning ** The following Report Variables were requested but not generated -- check.rdd file
+   **   ~~~   ** Either the IDF did not contain these elements, the variable name is misspelled,
+   **   ~~~   ** or the requested variable is an advanced output which requires Output : Diagnostics, DisplayAdvancedReportVariables;
+   ************* Key=*, VarName=COOLING COIL TOTAL WATER HEATING ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=COOLING COIL WATER HEATING ELECTRIC ENERGY, Frequency=Hourly
+   ************* Key=*, VarName=GROUND HEAT EXCHANGER INLET TEMPERATURE, Frequency=Hourly
+   ************* Key=*, VarName=GROUND HEAT EXCHANGER OUTLET TEMPERATURE, Frequency=Hourly
+   ************* Key=*, VarName=GROUND HEAT EXCHANGER HEAT TRANSFER RATE, Frequency=Hourly
+   ************* There are 1 unused objects in input.
+   ************* Use Output:Diagnostics,DisplayUnusedObjects; to see them.
+   ************* There are 52 unused schedules in input.
+   ************* There are 52 unused week schedules in input.
+   ************* There are 87 unused day schedules in input.
+   ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
+   *************
+   ************* ===== Recurring Error Summary =====
+   ************* The following recurring error messages occurred.
+   *************
+   *************  ** Warning ** Entered Humidity Ratio invalid (PsyWFnTdpPb)
+   *************  **   ~~~   **   This error occurred 1 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=173.663759 []  Min=173.663759 []
+   *************
+   *************  ** Warning ** CoolingTower:VariableSpeed "CT1" - Tower range temperature is out of range error continues...
+   *************  **   ~~~   **   This error occurred 19316 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1.111096  Min=0.000007
+   *************
+   *************  ** Warning ** CoolingTower:VariableSpeed "CT1" - Tower approach temperature is out of range error continues...
+   *************  **   ~~~   **   This error occurred 15 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=43.967663  Min=42.007934
+   *************
+   *************  ** Warning ** WetBulb not converged after max iterations(PsyTwbFnTdbWPb)
+   *************  **   ~~~   **   This error occurred 1 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************
+   *************  ** Warning ** Temperature out of range [-100. to 200.] (PsyPsatFnTemp)
+   *************  **   ~~~   **   This error occurred 1 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=-1204.824585 C  Min=-1204.824585 C
+   *************
+   *************
+   ************* ===== Final Error Summary =====
+   ************* The following error categories occurred.  Consider correcting or noting.
+   ************* InterZone Surface Areas -- mismatch
+   ************* ..Area mismatch errors happen when the interzone surface in zone A is
+   ************* ..not the same size as it's companion in zone B.
+   ************* Nominally Unused Constructions
+   ************* ..The nominally unused constructions warning is provided to alert you to potential conditions that can cause
+   ************* ..extra time during simulation. Each construction is calculated by the algorithm indicated in the HeatBalanceAlgorithm
+   ************* ..object. You may remove the constructions indicated (when you use the DisplayExtraWarnings option).
+   *************
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 205 Warning; 0 Severe Errors.
+   ************* EnergyPlus Completed Successfully-- 19595 Warning; 1 Severe Errors; Elapsed Time=00hr 14min 33.26sec
