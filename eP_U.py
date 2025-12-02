@@ -264,17 +264,67 @@ def allocate_console():
 
 
 def cleanup_and_exit():
-    """Cleanup function to ensure process termination"""
+    """
+    Cleanup function to ensure process termination.
+    Only terminates child processes of this application, not other EnergyPlus instances.
+    """
+    print("Initiating cleanup...")
+
+    # Strategy 1: Terminate tracked multiprocessing children
     try:
-        # Terminate any remaining multiprocessing processes
-        for process in multiprocessing.active_children():
-            process.terminate()
-            process.join(timeout=1)
-            if process.is_alive():
-                process.kill()
-    except:
-        pass
-    
+        children = multiprocessing.active_children()
+        print(f"Found {len(children)} active multiprocessing children")
+
+        for child in children:
+            try:
+                if child.is_alive():
+                    print(f"Terminating child process: {child.name} (PID: {child.pid})")
+                    child.terminate()
+                    child.join(timeout=2)
+
+                    if child.is_alive():
+                        print(f"Force killing child process: {child.name}")
+                        child.kill()
+                        child.join(timeout=1)
+            except Exception as e:
+                print(f"Error terminating child {child.name}: {e}")
+    except Exception as e:
+        print(f"Error accessing active_children: {e}")
+
+    # Strategy 2: Kill all child processes using psutil (only OUR children)
+    try:
+        import psutil
+        current_process = psutil.Process(os.getpid())
+        children = current_process.children(recursive=True)
+
+        print(f"Found {len(children)} child processes via psutil")
+
+        for child in children:
+            try:
+                print(f"Terminating child PID {child.pid}: {child.name()}")
+                child.terminate()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
+
+        # Wait for termination
+        gone, alive = psutil.wait_procs(children, timeout=3)
+
+        # Force kill remaining processes
+        for child in alive:
+            try:
+                print(f"Force killing PID {child.pid}: {child.name()}")
+                child.kill()
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
+
+    except Exception as e:
+        print(f"Error with psutil cleanup: {e}")
+
+    # Small delay to ensure cleanup completes
+    import time
+    time.sleep(0.5)
+
+    print("Cleanup complete. Exiting...")
     os._exit(0)
 
 

@@ -37,6 +37,7 @@ import sys
 import glob
 import signal
 import argparse
+import multiprocessing
 
 from eP_C import APP_NAME, VERSION, DEFAULT_EPLUS_PATH
 from eP_D import check_and_install_dependencies
@@ -46,9 +47,10 @@ from eP_G import show_gui
 
 
 def main():
+
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
     check_and_install_dependencies()
     
     parser = argparse.ArgumentParser(description='Run EnergyPlus simulations in parallel with Rich UI')
@@ -136,8 +138,11 @@ def main():
 
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()
+
     try:
         main()
+        cleanup_and_exit()
     except KeyboardInterrupt:
         print("\nOperation cancelled by user")
         cleanup_and_exit()

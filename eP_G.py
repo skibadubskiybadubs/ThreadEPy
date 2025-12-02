@@ -14,7 +14,7 @@ import queue
 import json
 
 from eP_C import APP_NAME, APP_NAME_ASCII, VERSION, DEFAULT_EPLUS_PATH, UI_COLORS
-from eP_U import save_config_to_temp
+from eP_U import save_config_to_temp, cleanup_and_exit
 
 
 class EnergyPlusGUI:
@@ -1005,40 +1005,31 @@ class EnergyPlusGUI:
             self.simulation_running = False
 
     def terminate_all_processes(self):
-        """Terminate all active EnergyPlus processes"""
-        import psutil
+        """Terminate only the processes tracked by this application"""
         terminated_count = 0
 
-        # Terminate processes tracked in our list
-        for proc in self.active_processes:
+        # Terminate only processes we explicitly started and tracked
+        for proc in list(self.active_processes):
             try:
                 if proc and proc.is_alive():
+                    print(f"Terminating tracked process PID {proc.pid}")
                     proc.terminate()
-                    proc.join(timeout=2)
+                    proc.join(timeout=1)
                     if proc.is_alive():
+                        print(f"Force killing tracked process PID {proc.pid}")
                         proc.kill()
+                        proc.join(timeout=1)
                     terminated_count += 1
-            except:
-                pass
+            except Exception as e:
+                print(f"Error terminating tracked process: {e}")
 
-        # Also kill any remaining energyplus.exe processes
-        try:
-            for proc in psutil.process_iter(['name']):
-                if proc.info['name'] and 'energyplus' in proc.info['name'].lower():
-                    try:
-                        psutil.Process(proc.pid).kill()
-                        terminated_count += 1
-                    except:
-                        pass
-        except:
-            pass
-
-        self.active_processes = []
+        self.active_processes.clear()
 
         if terminated_count > 0:
+            print(f'Terminated {terminated_count} process(es)')
             self.output_queue.put({
                 'type': 'LOG',
-                'message': f'Terminated {terminated_count} EnergyPlus process(es)',
+                'message': f'Terminated {terminated_count} process(es)',
                 'tag': 'warning'
             })
 
@@ -1083,11 +1074,16 @@ class EnergyPlusGUI:
             self.start_simulations()
 
     def cancel(self):
-        """Close the GUI (called on window close)"""
+        """Close the GUI"""
+        # Terminate any running simulation thread
+        if self.simulation_thread and self.simulation_thread.is_alive():
+            self.simulation_running = False
+            if self.stop_event:
+                self.stop_event.set()
+
         self.result = None
         self.root.quit()
         self.root.destroy()
-        sys.exit(0)
 
     def load_settings(self):
         """Load previous settings from config file"""
@@ -1128,12 +1124,63 @@ class EnergyPlusGUI:
             pass
 
     def on_closing(self):
-        """window closing event"""
+        """Window closing event with proper cleanup"""
+        print("Window closing - starting cleanup...")
         self.save_settings()
+
+        # Stop simulation thread if running
+        if self.simulation_thread and self.simulation_thread.is_alive():
+            self.simulation_running = False
+            if self.stop_event:
+                self.stop_event.set()
+
+            # Wait for thread to finish (with timeout)
+            self.simulation_thread.join(timeout=2)
+
+        # Terminate all tracked simulation processes
+        self.terminate_all_processes()
+
+        # Kill any remaining child processes (including Manager server process)
+        try:
+            import psutil
+            import os
+            current_process = psutil.Process(os.getpid())
+            children = current_process.children(recursive=True)
+
+            print(f"Found {len(children)} child processes to clean up")
+            for child in children:
+                try:
+                    print(f"Terminating child {child.pid}: {child.name()}")
+                    child.terminate()
+                except:
+                    pass
+
+            # Wait briefly, then force kill
+            gone, alive = psutil.wait_procs(children, timeout=1)
+            for child in alive:
+                try:
+                    print(f"Force killing child {child.pid}")
+                    child.kill()
+                except:
+                    pass
+        except Exception as e:
+            print(f"Error cleaning up children: {e}")
+
+        # Clean up tkinter
         self.result = None
-        self.root.quit()
-        self.root.destroy()
-        sys.exit(0)
+        try:
+            self.root.quit()
+        except:
+            pass
+        try:
+            self.root.destroy()
+        except:
+            pass
+
+        print("Cleanup complete, exiting...")
+        # Force exit to ensure no zombie process
+        import os
+        os._exit(0)
         
     def show(self):
         """Show the GUI and return the result"""
