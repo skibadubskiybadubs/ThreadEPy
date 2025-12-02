@@ -2,7 +2,7 @@
     constants
 """
 
-VERSION = "1.5.1"
+VERSION = "1.5.2"
 APP_NAME = "ThreadEPy"
 APP_NAME_ASCII = r"""
        _            _       _    _           _            _                _            _            _    _        _

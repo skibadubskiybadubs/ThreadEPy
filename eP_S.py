@@ -46,41 +46,32 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
     """
     if output_files is None:
         output_files = []
-    # Make sure we have absolute paths
     idf_file = os.path.abspath(idf_file)
     weather_file = os.path.abspath(weather_file)
     eplus_dir = os.path.abspath(eplus_dir)
-    
-    # Get the output directory (current working directory)
-    # (same as IDF file directory)
-    try: 
+
+    try:
         output_dir = os.path.dirname(idf_file)
-    except: 
+    except:
         output_dir = os.getcwd()
-    
-    # Get file names
+
     idf_basename = os.path.basename(idf_file)
     idf_name = os.path.splitext(idf_basename)[0]
     weather_basename = os.path.basename(weather_file)
-    
-    # Signal that we're starting
+
     update_queue.put(("INFO", f"Starting simulation for {idf_basename}"))
     update_queue.put(("UPDATE", idf_name, {'status': 'Initializing'}))
     
     try:
-        # Create a unique temporary directory for the simulation
         temp_dir = tempfile.mkdtemp(prefix=f"EP_{idf_name}_")
         update_queue.put(("INFO", f"Created temporary directory: {temp_dir}"))
-        
-        # Copy the IDF file to the temp directory
+
         temp_idf = os.path.join(temp_dir, idf_basename)
         shutil.copy2(idf_file, temp_idf)
-        
-        # Copy the weather file to the temp directory
+
         temp_weather = os.path.join(temp_dir, weather_basename)
         shutil.copy2(weather_file, temp_weather)
-        
-        # Copy required EnergyPlus files to the temp directory
+
         energyplus_exe = os.path.join(eplus_dir, 'energyplus.exe')
         if not os.path.exists(energyplus_exe):
             update_queue.put(("INFO", f"Error: EnergyPlus executable not found at {energyplus_exe}"))
@@ -89,7 +80,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                 'progress': 100,
                 'end_time': time.time()
             }))
-            update_queue.put(("COMPLETED", idf_name))  # Signal completion even on error
+            update_queue.put(("COMPLETED", idf_name))
             if completed_queue:
                 completed_queue.put(idf_name)
             return
@@ -99,47 +90,31 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             if os.path.exists(src_path):
                 dst_path = os.path.join(temp_dir, file)
                 shutil.copy2(src_path, dst_path)
-        
-        # Create empty Energy+.ini file
+
         with open(os.path.join(temp_dir, 'Energy+.ini'), 'w') as f:
             pass
-        
-        # Change to the temporary directory
+
         original_dir = os.getcwd()
         os.chdir(temp_dir)
         
-        # Build EnergyPlus command with output control flags
         cmd = [
             energyplus_exe,
-            '-w', weather_basename, # Weather file
-            '-p', idf_name,         # Prefix for output files
-            '-d', output_dir        # Output directory
+            '-w', weather_basename,
+            '-p', idf_name,
+            '-d', output_dir
         ]
 
-        # Add output control flags based on mode
         if output_mode == "Default":
-            # Default mode: minimal outputs (only err and htm)
-            cmd.extend(['-x'])  # Do not create IDF/epmidf/epmdet/mtd/mdd/rdd/shd/dxf/svg/sci/wrl/sln
-        elif output_mode == "Pristine":
-            # Pristine mode: use whatever is in the IDF file (no flags)
-            pass
-        elif output_mode == "Custom" and output_files:
-            # Custom mode: use -x to suppress all, then selectively enable outputs
-            # Note: EnergyPlus doesn't have granular command-line control for all outputs
-            # The -x flag disables optional outputs, but CSV/MTR/ESO outputs are controlled via IDF Output:* objects
-            # For full control, we'd need to modify the IDF file, which is complex
-            # For now, we'll just use -x or not based on whether files are selected
-            if not output_files:
-                cmd.extend(['-x'])  # Suppress if nothing selected
+            cmd.extend(['-x'])
+        elif output_mode == "Custom" and not output_files:
+            cmd.extend(['-x'])
 
-        # Add the IDF file at the end
         cmd.append(idf_basename)
         
         cmd_str = ' '.join(cmd)
         update_queue.put(("INFO", f"Running command: {cmd_str}"))
         update_queue.put(("UPDATE", idf_name, {'status': 'Running'}))
-        
-        # Start the EnergyPlus process
+
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -148,8 +123,6 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             bufsize=1,
             universal_newlines=True
         )
-
-        # Start a process monitor for CPU and memory
         monitor_thread = threading.Thread(
             target=process_monitor,
             args=(process.pid, idf_name, update_queue)

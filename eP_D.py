@@ -120,7 +120,7 @@ def main():
     
     return True
 
-if __name__ == "__eP_P__":
+if __name__ == "__main__":
     success = main()
     if not success:
         input("\nPress Enter to exit...")
