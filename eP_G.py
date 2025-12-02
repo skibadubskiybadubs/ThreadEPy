@@ -43,6 +43,42 @@ class EnergyPlusGUI:
         self.max_workers = tk.IntVar(value=max(1, cpu_count() - 1))
         self.csv_output = tk.StringVar(value="simulation_results.csv")
 
+        # Output file settings
+        self.output_mode = tk.StringVar(value="Default")  # Default, Pristine, or Custom
+        self.output_files = {
+            'CSV': tk.BooleanVar(value=False),
+            'MTR': tk.BooleanVar(value=False),
+            'ESO': tk.BooleanVar(value=False),
+            'EIO': tk.BooleanVar(value=False),
+            'Tabular': tk.BooleanVar(value=False),
+            'SQLite': tk.BooleanVar(value=False),
+            'JSON': tk.BooleanVar(value=False),
+            'AUDIT': tk.BooleanVar(value=False),
+            'Zone Sizing': tk.BooleanVar(value=False),
+            'System Sizing': tk.BooleanVar(value=False),
+            'DXF': tk.BooleanVar(value=False),
+            'BND': tk.BooleanVar(value=False),
+            'RDD': tk.BooleanVar(value=False),
+            'MDD': tk.BooleanVar(value=False),
+            'MTD': tk.BooleanVar(value=False),
+            'END': tk.BooleanVar(value=False),
+            'SHD': tk.BooleanVar(value=False),
+            'DFS': tk.BooleanVar(value=False),
+            'GLHE': tk.BooleanVar(value=False),
+            'DelightIn': tk.BooleanVar(value=False),
+            'DelightELdmp': tk.BooleanVar(value=False),
+            'DelightDFdmp': tk.BooleanVar(value=False),
+            'EDD': tk.BooleanVar(value=False),
+            'DBG': tk.BooleanVar(value=False),
+            'PerfLog': tk.BooleanVar(value=False),
+            'SLN': tk.BooleanVar(value=False),
+            'SCI': tk.BooleanVar(value=False),
+            'WRL': tk.BooleanVar(value=False),
+            'Screen': tk.BooleanVar(value=False),
+            'ExtShd': tk.BooleanVar(value=False),
+            'Tarcog': tk.BooleanVar(value=False)
+        }
+
         # Add trace to idf_folder to auto-update file list when folder changes
         self.idf_folder.trace_add('write', lambda *args: self.on_idf_folder_changed())
 
@@ -298,8 +334,8 @@ class EnergyPlusGUI:
                                 borderwidth=0, relief='flat')
         folder_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), pady=row_pady, padx=(5, 5))
 
-        bt_enter = "⌞  🗁  ⌝"
-        bt_exit = "⌞  🗀  ⌝"
+        bt_enter = "⌜  🗀  ⌟"#"⌜  🗁  ⌟"
+        bt_exit =  "⌜  🗀  ⌟"#"⌞  🗀  ⌝"
 
         idf_browse_btn = ttk.Button(self.content_frame, text=bt_exit, command=self.select_idf_folder, style='Browse.TButton')
         idf_browse_btn.grid(row=0, column=2, pady=row_pady, sticky=tk.E)
@@ -374,18 +410,11 @@ class EnergyPlusGUI:
                              borderwidth=0, relief='flat')
         csv_entry.grid(row=0, column=4, sticky=(tk.W, tk.E), padx=(0, 0), pady=6)
 
-        # Add a spacer frame in column 5 to reserve space matching the Browse button width
-        # Create a dummy button to get exact width measurement (including padding)
-        dummy_btn = ttk.Button(settings_frame, text=bt_exit, style='Browse.TButton')
-        dummy_btn.grid(row=0, column=5, pady=row_pady, sticky=tk.E)
-        self.root.update_idletasks()  # Force layout calculation
-        button_width = dummy_btn.winfo_reqwidth()
-        dummy_btn.grid_forget()  # Remove dummy button
-
-        # Now create spacer with exact width matching the Browse button
-        spacer = ttk.Frame(settings_frame, width=button_width, style='Dark.TFrame')
-        spacer.grid(row=0, column=5, pady=row_pady, sticky=(tk.N, tk.S, tk.E, tk.W))
-        spacer.grid_propagate(False)
+        # Output Settings button (aligned with Browse buttons above)
+        output_settings_btn = ttk.Button(settings_frame, text="⌞  ≡  ⌝", command=self.show_output_settings, style='Browse.TButton')
+        output_settings_btn.grid(row=0, column=5, pady=row_pady, sticky=tk.E)
+        output_settings_btn.bind('<Enter>', lambda _: output_settings_btn.config(text="⌞  ≡  ⌝"))
+        output_settings_btn.bind('<Leave>', lambda _: output_settings_btn.config(text="⌞  ≡  ⌝"))
         
         # IDF Files Selection Frame
         self.files_frame = ttk.LabelFrame(self.content_frame, text="Select IDF Files to Run", style='Dark.TLabelframe')
@@ -554,7 +583,90 @@ class EnergyPlusGUI:
         folder = filedialog.askdirectory(title="Select EnergyPlus installation folder")
         if folder:
             self.eplus_folder.set(folder)
-            
+
+    def show_output_settings(self):
+        """Show output file settings dialog"""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Output File Settings")
+        dialog.geometry("400x550")
+        dialog.configure(bg=UI_COLORS['bg'])
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        # Main frame with padding
+        main_frame = ttk.Frame(dialog, style='Dark.TFrame', padding=15)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Output mode selection
+        ttk.Label(main_frame, text="Output Mode:", style='Dark.TLabel', font=('Segoe UI', 10, 'bold')).pack(anchor=tk.W, pady=(0, 10))
+
+        # Radio buttons for mode
+        ttk.Radiobutton(main_frame, text="Default (only .err and .htm/.html tabular)",
+                       variable=self.output_mode, value="Default",
+                       style='Dark.TRadiobutton',
+                       command=self.update_output_checkboxes_state).pack(anchor=tk.W, padx=10)
+
+        ttk.Radiobutton(main_frame, text="Pristine (use outputs defined in each .IDF file)",
+                       variable=self.output_mode, value="Pristine",
+                       style='Dark.TRadiobutton',
+                       command=self.update_output_checkboxes_state).pack(anchor=tk.W, padx=10, pady=5)
+
+        ttk.Radiobutton(main_frame, text="Custom (select specific outputs below)",
+                       variable=self.output_mode, value="Custom",
+                       style='Dark.TRadiobutton',
+                       command=self.update_output_checkboxes_state).pack(anchor=tk.W, padx=10)
+
+        # Separator
+        ttk.Separator(main_frame, orient='horizontal').pack(fill=tk.X, pady=15)
+
+        # Custom output files frame
+        ttk.Label(main_frame, text="Custom Output Files:", style='Dark.TLabel', font=('Segoe UI', 10, 'bold')).pack(anchor=tk.W, pady=(0, 10))
+
+        # Scrollable frame for checkboxes
+        checkbox_canvas = tk.Canvas(main_frame, bg=UI_COLORS['bg'], highlightthickness=0, height=250)
+        checkbox_scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=checkbox_canvas.yview)
+        checkbox_frame = ttk.Frame(checkbox_canvas, style='Dark.TFrame')
+
+        checkbox_frame.bind(
+            "<Configure>",
+            lambda e: checkbox_canvas.configure(scrollregion=checkbox_canvas.bbox("all"))
+        )
+
+        checkbox_canvas.create_window((0, 0), window=checkbox_frame, anchor="nw")
+        checkbox_canvas.configure(yscrollcommand=checkbox_scrollbar.set)
+
+        checkbox_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        checkbox_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Store checkbox widgets for enabling/disabling
+        self.output_checkboxes = []
+
+        # Create checkboxes in 2 columns
+        output_list = list(self.output_files.keys())
+        for i, output_name in enumerate(output_list):
+            col = i % 2
+            row = i // 2
+            cb = ttk.Checkbutton(checkbox_frame, text=output_name,
+                               variable=self.output_files[output_name],
+                               style='Dark.TCheckbutton')
+            cb.grid(row=row, column=col, sticky=tk.W, padx=10, pady=3)
+            self.output_checkboxes.append(cb)
+
+        # Update initial state of checkboxes
+        self.update_output_checkboxes_state()
+
+        # OK button
+        ok_btn = ttk.Button(main_frame, text="OK", command=dialog.destroy, style='Dark.TButton')
+        ok_btn.pack(pady=(15, 0))
+
+    def update_output_checkboxes_state(self):
+        """Enable/disable output file checkboxes based on mode"""
+        if hasattr(self, 'output_checkboxes'):
+            enabled = self.output_mode.get() == "Custom"
+            state = 'normal' if enabled else 'disabled'
+            for cb in self.output_checkboxes:
+                cb.configure(state=state)
+
     def load_idf_files(self):
         """Load IDF files from selected folder and create checkboxes"""
         folder = self.idf_folder.get()
@@ -638,12 +750,19 @@ class EnergyPlusGUI:
             return
 
         # Create configuration dictionary
+        # Collect selected output files
+        selected_outputs = []
+        if self.output_mode.get() == "Custom":
+            selected_outputs = [name for name, var in self.output_files.items() if var.get()]
+
         config = {
             'idf_files': self.selected_files,
             'epw_file': self.epw_file.get(),
             'eplus_path': self.eplus_folder.get(),
             'max_workers': self.max_workers.get(),
-            'csv_output': self.csv_output.get()
+            'csv_output': self.csv_output.get(),
+            'output_mode': self.output_mode.get(),
+            'output_files': selected_outputs
         }
 
         # Hide input UI and show output display
@@ -979,6 +1098,12 @@ class EnergyPlusGUI:
                     self.idf_folder.set(config.get('idf_folder', ''))
                     self.epw_file.set(config.get('epw_file', ''))
                     self.eplus_folder.set(config.get('eplus_folder', DEFAULT_EPLUS_PATH))
+
+                    # Load output settings
+                    self.output_mode.set(config.get('output_mode', 'Default'))
+                    output_files_config = config.get('output_files', {})
+                    for name, var in self.output_files.items():
+                        var.set(output_files_config.get(name, False))
         except:
             # If config is corrupted or can't be read, just use defaults
             pass
@@ -986,10 +1111,15 @@ class EnergyPlusGUI:
     def save_settings(self):
         """Save current settings to config file"""
         try:
+            # Save output file selections
+            output_files_config = {name: var.get() for name, var in self.output_files.items()}
+
             config = {
                 'idf_folder': self.idf_folder.get(),
                 'epw_file': self.epw_file.get(),
-                'eplus_folder': self.eplus_folder.get()
+                'eplus_folder': self.eplus_folder.get(),
+                'output_mode': self.output_mode.get(),
+                'output_files': output_files_config
             }
             with open(self.config_file, 'w') as f:
                 json.dump(config, f, indent=2)

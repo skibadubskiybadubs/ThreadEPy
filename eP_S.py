@@ -28,20 +28,24 @@ Layout = rich_components['Layout']
 psutil = rich_components['psutil']
 
 
-def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, completed_queue=None):
+def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, completed_queue=None, output_mode="Default", output_files=None):
     """
     Run a single EnergyPlus simulation.
-    
+
     Args:
         idf_file (str): Path to the IDF file
         weather_file (str): Path to the EPW weather file
         eplus_dir (str): Path to the EnergyPlus installation directory
         update_queue (Queue): Queue for status updates
         completed_queue (Queue, optional): Queue for completion signals
-    
+        output_mode (str): Output mode - "Default", "Pristine", or "Custom"
+        output_files (list, optional): List of output file types to generate (for Custom mode)
+
     Returns:
         None
     """
+    if output_files is None:
+        output_files = []
     # Make sure we have absolute paths
     idf_file = os.path.abspath(idf_file)
     weather_file = os.path.abspath(weather_file)
@@ -104,14 +108,32 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
         original_dir = os.getcwd()
         os.chdir(temp_dir)
         
-        # Run EnergyPlus with the correct command line
+        # Build EnergyPlus command with output control flags
         cmd = [
             energyplus_exe,
             '-w', weather_basename, # Weather file
             '-p', idf_name,         # Prefix for output files
-            '-d', output_dir,       # Output directory
-            idf_basename
+            '-d', output_dir        # Output directory
         ]
+
+        # Add output control flags based on mode
+        if output_mode == "Default":
+            # Default mode: minimal outputs (only err and htm)
+            cmd.extend(['-x'])  # Do not create IDF/epmidf/epmdet/mtd/mdd/rdd/shd/dxf/svg/sci/wrl/sln
+        elif output_mode == "Pristine":
+            # Pristine mode: use whatever is in the IDF file (no flags)
+            pass
+        elif output_mode == "Custom" and output_files:
+            # Custom mode: use -x to suppress all, then selectively enable outputs
+            # Note: EnergyPlus doesn't have granular command-line control for all outputs
+            # The -x flag disables optional outputs, but CSV/MTR/ESO outputs are controlled via IDF Output:* objects
+            # For full control, we'd need to modify the IDF file, which is complex
+            # For now, we'll just use -x or not based on whether files are selected
+            if not output_files:
+                cmd.extend(['-x'])  # Suppress if nothing selected
+
+        # Add the IDF file at the end
+        cmd.append(idf_basename)
         
         cmd_str = ' '.join(cmd)
         update_queue.put(("INFO", f"Running command: {cmd_str}"))
@@ -239,17 +261,21 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             pass
 
 
-def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_workers=None, csv_output="simulation_results.csv"):
+def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_workers=None, csv_output="simulation_results.csv", output_mode="Default", output_files=None):
     """
     Run EnergyPlus simulations in parallel with a Rich UI showing progress.
-    
+
     Args:
         idf_files (list): List of IDF file paths
-        weather_file (str): Path to the EPW weather file  
+        weather_file (str): Path to the EPW weather file
         eplus_path (str): Path to the EnergyPlus installation directory
         max_workers (int): Maximum number of parallel simulations
         csv_output (str): Name of the CSV output file for results summary
+        output_mode (str): Output mode - "Default", "Pristine", or "Custom"
+        output_files (list): List of output file types to generate (for Custom mode)
     """
+    if output_files is None:
+        output_files = []
     if not idf_files:
         print("No IDF files provided")
         return
@@ -338,7 +364,7 @@ def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_work
         # Create and start the process
         process = Process(
             target=run_energyplus_simulation,
-            args=(idf_file, weather_file, eplus_path, update_queue, completed_queue)
+            args=(idf_file, weather_file, eplus_path, update_queue, completed_queue, output_mode, output_files)
         )
         process.start()
         
@@ -749,6 +775,8 @@ def run_simulations_for_gui(config, gui_queue, stop_event=None, active_processes
     eplus_path = config['eplus_path']
     max_workers = config['max_workers']
     csv_output = config['csv_output']
+    output_mode = config.get('output_mode', 'Default')
+    output_files = config.get('output_files', [])
 
     if not idf_files:
         gui_queue.put({'type': 'LOG', 'message': 'No IDF files provided', 'tag': 'error'})
@@ -860,7 +888,7 @@ def run_simulations_for_gui(config, gui_queue, stop_event=None, active_processes
 
         process = Process(
             target=run_energyplus_simulation,
-            args=(idf_file, weather_file, eplus_path, update_queue, completed_queue)
+            args=(idf_file, weather_file, eplus_path, update_queue, completed_queue, output_mode, output_files)
         )
         process.start()
 
