@@ -601,12 +601,12 @@ class EnergyPlusGUI:
         ttk.Label(main_frame, text="Output Mode:", style='Dark.TLabel', font=('Segoe UI', 10, 'bold')).pack(anchor=tk.W, pady=(0, 10))
 
         # Radio buttons for mode
-        ttk.Radiobutton(main_frame, text="Default (only .err and .htm/.html tabular)",
+        ttk.Radiobutton(main_frame, text="Default (minimal output: CSV + Tabular only)",
                        variable=self.output_mode, value="Default",
                        style='Dark.TRadiobutton',
                        command=self.update_output_checkboxes_state).pack(anchor=tk.W, padx=10)
 
-        ttk.Radiobutton(main_frame, text="Pristine (use outputs defined in each .IDF file)",
+        ttk.Radiobutton(main_frame, text="Pristine (honor IDF file settings, no modifications)",
                        variable=self.output_mode, value="Pristine",
                        style='Dark.TRadiobutton',
                        command=self.update_output_checkboxes_state).pack(anchor=tk.W, padx=10, pady=5)
@@ -753,7 +753,8 @@ class EnergyPlusGUI:
         # Collect selected output files
         selected_outputs = []
         if self.output_mode.get() == "Custom":
-            selected_outputs = [name for name, var in self.output_files.items() if var.get()]
+            # Convert GUI short names to OUTPUT_FILE_MAP keys (e.g., 'CSV' -> 'Output CSV')
+            selected_outputs = [f"Output {name}" for name, var in self.output_files.items() if var.get()]
 
         config = {
             'idf_files': self.selected_files,
@@ -784,6 +785,21 @@ class EnergyPlusGUI:
         self.total_simulations = len(self.selected_files)
         self.completed_simulations = 0
         self.active_processes = []  # Reset process tracking
+
+        # Track IDF files and output mode for cleanup/restoration
+        self.current_idf_files = config['idf_files']
+        self.current_output_mode = config.get('output_mode', 'Default')
+        self.current_output_files = config.get('output_files', [])
+
+        # Backup OutputControl:Files for each IDF BEFORE starting simulations
+        from eP_U import backup_output_controls
+        self.idf_backups = {}  # {idf_file: (had_controls, original_text)}
+        for idf_file in self.current_idf_files:
+            try:
+                had_controls, original_text = backup_output_controls(idf_file)
+                self.idf_backups[idf_file] = (had_controls, original_text)
+            except Exception as e:
+                print(f"Error backing up {idf_file}: {e}")
 
         # Create stop event for this simulation run
         self.stop_event = threading.Event()
@@ -1008,7 +1024,33 @@ class EnergyPlusGUI:
         """Terminate only the processes tracked by this application"""
         terminated_count = 0
 
-        # Terminate only processes we explicitly started and tracked
+        # FIRST: Kill all EnergyPlus subprocesses (before killing worker processes)
+        # This prevents orphaned EnergyPlus processes on Windows
+        try:
+            import psutil
+            energyplus_killed = 0
+
+            for proc in psutil.process_iter(['pid', 'name']):
+                try:
+                    # Check if it's an EnergyPlus process
+                    if proc.info['name'] and 'energyplus' in proc.info['name'].lower():
+                        print(f"Killing EnergyPlus subprocess PID {proc.info['pid']}")
+                        psutil.Process(proc.info['pid']).kill()
+                        energyplus_killed += 1
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
+
+            if energyplus_killed > 0:
+                print(f'Killed {energyplus_killed} EnergyPlus subprocess(es)')
+                self.output_queue.put({
+                    'type': 'LOG',
+                    'message': f'Killed {energyplus_killed} EnergyPlus subprocess(es)',
+                    'tag': 'warning'
+                })
+        except Exception as e:
+            print(f"Error killing EnergyPlus subprocesses: {e}")
+
+        # SECOND: Terminate worker processes
         for proc in list(self.active_processes):
             try:
                 if proc and proc.is_alive():
@@ -1026,11 +1068,49 @@ class EnergyPlusGUI:
         self.active_processes.clear()
 
         if terminated_count > 0:
-            print(f'Terminated {terminated_count} process(es)')
+            print(f'Terminated {terminated_count} worker process(es)')
             self.output_queue.put({
                 'type': 'LOG',
-                'message': f'Terminated {terminated_count} process(es)',
+                'message': f'Terminated {terminated_count} worker process(es)',
                 'tag': 'warning'
+            })
+
+        # Restore all modified IDF files using backed-up state
+        from eP_U import restore_output_controls
+        try:
+            restored_count = 0
+            if hasattr(self, 'idf_backups') and self.idf_backups:
+                for idf_file, (had_controls, original_text) in self.idf_backups.items():
+                    try:
+                        # Skip restoration for Pristine mode
+                        if self.current_output_mode == "Pristine":
+                            continue
+
+                        # Restore using the backup info
+                        restore_output_controls(idf_file, had_controls, original_text)
+                        restored_count += 1
+                    except Exception as e:
+                        print(f"Error restoring {idf_file}: {e}")
+
+                if restored_count > 0:
+                    print(f'Restored {restored_count} IDF file(s) to original state')
+                    self.output_queue.put({
+                        'type': 'LOG',
+                        'message': f'Restored {restored_count} IDF file(s) to original state',
+                        'tag': 'info'
+                    })
+                else:
+                    print('No IDF files needed restoration (Pristine mode)')
+            else:
+                print('No backup information available for restoration')
+        except Exception as e:
+            print(f"Error restoring IDF files: {e}")
+            import traceback
+            traceback.print_exc()
+            self.output_queue.put({
+                'type': 'LOG',
+                'message': f'Error restoring IDF files: {e}',
+                'tag': 'error'
             })
 
     def toggle_simulation(self):
@@ -1046,6 +1126,15 @@ class EnergyPlusGUI:
             self.log_messages = []
             self.total_simulations = 0
             self.completed_simulations = 0
+
+            # Clear IDF backups (files should already be restored)
+            if hasattr(self, 'idf_backups'):
+                self.idf_backups.clear()
+
+            # Also clear the global registry
+            from eP_U import clear_idf_backup_registry
+            clear_idf_backup_registry()
+
             # Show input UI again, hide output
             self.output_frame.grid_remove()
             self.content_frame.grid()

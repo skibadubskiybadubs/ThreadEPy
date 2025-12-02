@@ -44,6 +44,8 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
     Returns:
         None
     """
+    from eP_U import backup_output_controls, inject_output_controls, restore_output_controls
+
     if output_files is None:
         output_files = []
     idf_file = os.path.abspath(idf_file)
@@ -61,8 +63,14 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
 
     update_queue.put(("INFO", f"Starting simulation for {idf_basename}"))
     update_queue.put(("UPDATE", idf_name, {'status': 'Initializing'}))
-    
+
+    # Step 1: Backup original OutputControl:Files state
+    had_controls, original_text = backup_output_controls(idf_file)
+
     try:
+        # Step 2: Inject OutputControl:Files into the ORIGINAL IDF file
+        inject_output_controls(idf_file, output_mode, output_files)
+
         temp_dir = tempfile.mkdtemp(prefix=f"EP_{idf_name}_")
         update_queue.put(("INFO", f"Created temporary directory: {temp_dir}"))
 
@@ -84,7 +92,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             if completed_queue:
                 completed_queue.put(idf_name)
             return
-        
+
         for file in ['Energy+.idd', 'DElight2.dll', 'libexpat.dll', 'bcvtb.dll']:
             src_path = os.path.join(eplus_dir, file)
             if os.path.exists(src_path):
@@ -96,20 +104,15 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
 
         original_dir = os.getcwd()
         os.chdir(temp_dir)
-        
+
+        # Step 3: Build EnergyPlus command (NO -x flag)
         cmd = [
             energyplus_exe,
             '-w', weather_basename,
             '-p', idf_name,
-            '-d', output_dir
+            '-d', output_dir,
+            idf_basename
         ]
-
-        if output_mode == "Default":
-            cmd.extend(['-x'])
-        elif output_mode == "Custom" and not output_files:
-            cmd.extend(['-x'])
-
-        cmd.append(idf_basename)
         
         cmd_str = ' '.join(cmd)
         update_queue.put(("INFO", f"Running command: {cmd_str}"))
@@ -208,7 +211,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
             shutil.rmtree(temp_dir, ignore_errors=True)
         except:
             pass
-        
+
     except Exception as e:
         # Make sure we're back in the original directory
         try:
@@ -216,7 +219,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                 os.chdir(original_dir)
         except:
             pass
-        
+
         try:
             update_queue.put(("INFO", f"Error running simulation for {idf_basename}: {str(e)}"))
             update_queue.put(("UPDATE", idf_name, {
@@ -224,7 +227,7 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
                 'progress': 100,  # Mark as 100% to show it's done
                 'end_time': time.time()
             }))
-            
+
             # Signal that this simulation is complete (for job scheduling)
             update_queue.put(("COMPLETED", idf_name))
             if completed_queue:
@@ -232,6 +235,10 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
         except:
             # If the queue is closed, we can't send updates
             pass
+
+    finally:
+        # Step 4: ALWAYS restore original OutputControl:Files state
+        restore_output_controls(idf_file, had_controls, original_text)
 
 
 def run_simulations(idf_files=None, weather_file=None, eplus_path=None, max_workers=None, csv_output="simulation_results.csv", output_mode="Default", output_files=None):

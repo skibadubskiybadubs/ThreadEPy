@@ -270,6 +270,14 @@ def cleanup_and_exit():
     """
     print("Initiating cleanup...")
 
+    # Restore all modified IDF files before exiting
+    try:
+        restored_count = restore_all_idf_files()
+        if restored_count > 0:
+            print(f"Restored {restored_count} IDF file(s) to original state")
+    except Exception as e:
+        print(f"Error restoring IDF files during cleanup: {e}")
+
     # Strategy 1: Terminate tracked multiprocessing children
     try:
         children = multiprocessing.active_children()
@@ -331,3 +339,200 @@ def cleanup_and_exit():
 def signal_handler(signum, frame):
     """Handle system signals"""
     cleanup_and_exit()
+
+
+# Global registry to track modified IDF files and their backup information
+# Format: {idf_file_path: (had_controls, original_text)}
+_idf_backup_registry = {}
+
+
+def backup_output_controls(idf_file):
+    """
+    Backup the existing OutputControl:Files object from an IDF file.
+    Stores backup in global registry for later restoration.
+
+    Args:
+        idf_file (str): Path to IDF file
+
+    Returns:
+        tuple: (had_controls: bool, original_text: str or None)
+    """
+    try:
+        # Normalize path for consistent registry keys
+        idf_file = os.path.abspath(idf_file)
+
+        with open(idf_file, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+
+        # Find the OutputControl:Files object
+        # Match "OutputControl:Files," followed by all lines until we hit a parameter line with semicolon
+        # The pattern looks for lines with comma, followed eventually by a line with semicolon (the last param)
+        # We need to match: OutputControl:Files, \n <params with comma> \n <last param with semicolon>
+        # Strategy: Match all lines that start with whitespace and have comma OR semicolon, until we hit one with semicolon
+
+        # More robust: Match OutputControl:Files, then keep matching lines until we find one that has
+        # a semicolon followed by a comment (the last parameter)
+        pattern = r'OutputControl:Files\s*,(?:\s*\n\s*[^,\n]*,\s*!-[^\n]*)*\s*\n\s*[^,\n]*;\s*!-[^\n]*'
+        match = re.search(pattern, content, re.IGNORECASE)
+
+        if match:
+            # Extract the full OutputControl:Files block including the header
+            full_text = match.group(0)
+            backup_info = (True, full_text)
+        else:
+            backup_info = (False, None)
+
+        # Register this backup in the global registry
+        _idf_backup_registry[idf_file] = backup_info
+
+        return backup_info
+
+    except Exception as e:
+        print(f"Error backing up OutputControl:Files from {idf_file}: {e}")
+        return (False, None)
+
+
+def inject_output_controls(idf_file, output_mode, output_files=None):
+    """
+    Inject or replace OutputControl:Files object in IDF file (in-place modification).
+
+    Args:
+        idf_file (str): Path to IDF file to modify
+        output_mode (str): "Default", "Pristine", or "Custom"
+        output_files (list): List of output file keys (e.g., ['Output CSV', 'Output JSON'])
+
+    Returns:
+        None (modifies file in-place)
+    """
+    # If Pristine mode, do nothing
+    if output_mode == "Pristine":
+        return
+
+    if output_files is None:
+        output_files = []
+
+    try:
+        # Read the IDF file
+        with open(idf_file, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+
+        # Build the OutputControl:Files object
+        params = []
+        for i, key in enumerate(OUTPUT_FILE_MAP.keys()):
+            if output_mode == "Default":
+                value = "Yes" if key in ['Output CSV', 'Output Tabular'] else "No"
+            elif output_mode == "Custom":
+                value = "Yes" if key in output_files else "No"
+            else:
+                value = "No"
+
+            # Last parameter uses semicolon, others use comma
+            separator = ";" if i == len(OUTPUT_FILE_MAP) - 1 else ","
+            # Format: 4 spaces + value + separator + padding to column 30 + comment
+            params.append(f"    {value}{separator:<25}!- {key}")
+
+        output_control = "OutputControl:Files,\n" + "\n".join(params)
+
+        # Check if OutputControl:Files already exists
+        # Use the same robust pattern as backup: match lines with commas, then final line with semicolon
+        pattern = r'OutputControl:Files\s*,(?:\s*\n\s*[^,\n]*,\s*!-[^\n]*)*\s*\n\s*[^,\n]*;\s*!-[^\n]*'
+        match = re.search(pattern, content, re.IGNORECASE)
+
+        if match:
+            # Replace existing OutputControl:Files
+            new_content = re.sub(pattern, output_control, content, flags=re.IGNORECASE)
+        else:
+            # Append at end of file
+            # Remove trailing whitespace and add OutputControl:Files
+            content = content.rstrip()
+            new_content = content + "\n\n" + output_control + "\n"
+
+        # Write modified content back
+        with open(idf_file, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+
+        print(f"Injected OutputControl:Files ({output_mode} mode) into {os.path.basename(idf_file)}")
+
+    except Exception as e:
+        print(f"Error injecting OutputControl:Files into {idf_file}: {e}")
+
+
+def restore_output_controls(idf_file, had_controls, original_text):
+    """
+    Restore the original OutputControl:Files state in IDF file.
+    Removes file from global registry after restoration.
+
+    Args:
+        idf_file (str): Path to IDF file
+        had_controls (bool): Whether file originally had OutputControl:Files
+        original_text (str): Original OutputControl:Files text (or None)
+
+    Returns:
+        None (modifies file in-place)
+    """
+    try:
+        # Normalize path for consistent registry keys
+        idf_file = os.path.abspath(idf_file)
+
+        # Read current content
+        with open(idf_file, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+
+        # Pattern to find ANY OutputControl:Files block
+        # Use the same robust pattern: match lines with commas, then final line with semicolon
+        pattern = r'OutputControl:Files\s*,(?:\s*\n\s*[^,\n]*,\s*!-[^\n]*)*\s*\n\s*[^,\n]*;\s*!-[^\n]*'
+
+        if had_controls and original_text:
+            # Restore the original OutputControl:Files
+            new_content = re.sub(pattern, original_text, content, count=1, flags=re.IGNORECASE | re.MULTILINE)
+            print(f"Restored original OutputControl:Files in {os.path.basename(idf_file)}")
+        elif not had_controls:
+            # Remove the injected OutputControl:Files
+            # Also remove the blank lines we added before it
+            new_content = re.sub(r'\n\n' + pattern, '', content, count=1, flags=re.IGNORECASE | re.MULTILINE)
+            # Fallback: remove without double newline
+            new_content = re.sub(pattern, '', new_content, count=1, flags=re.IGNORECASE | re.MULTILINE)
+            print(f"Removed injected OutputControl:Files from {os.path.basename(idf_file)}")
+        else:
+            # Nothing to do
+            return
+
+        # Write restored content back
+        with open(idf_file, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+
+        # Remove from registry after successful restoration
+        if idf_file in _idf_backup_registry:
+            del _idf_backup_registry[idf_file]
+
+    except Exception as e:
+        print(f"Error restoring OutputControl:Files in {idf_file}: {e}")
+
+
+def restore_all_idf_files():
+    """
+    Restore all IDF files that were modified during simulation.
+    Called when user stops simulations or on cleanup.
+
+    Returns:
+        int: Number of files restored
+    """
+    restored_count = 0
+
+    # Make a copy of registry keys to avoid modification during iteration
+    idf_files = list(_idf_backup_registry.keys())
+
+    for idf_file in idf_files:
+        try:
+            had_controls, original_text = _idf_backup_registry[idf_file]
+            restore_output_controls(idf_file, had_controls, original_text)
+            restored_count += 1
+        except Exception as e:
+            print(f"Error restoring {idf_file}: {e}")
+
+    return restored_count
+
+
+def clear_idf_backup_registry():
+    """Clear the IDF backup registry without restoring files."""
+    _idf_backup_registry.clear()
