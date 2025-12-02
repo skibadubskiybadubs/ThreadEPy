@@ -154,7 +154,37 @@ class EnergyPlusGUI:
                             bordercolor=UI_COLORS['select_bg'],
                             lightcolor=UI_COLORS['select_bg'],
                             darkcolor=UI_COLORS['select_bg'])
-        self.style.configure('Dark.TCheckbutton', background=UI_COLORS['bg'], foreground=UI_COLORS['fg'])
+        self.style.configure('Dark.TCheckbutton',
+                            background=UI_COLORS['bg'],
+                            foreground=UI_COLORS['fg'],
+                            relief='flat',
+                            borderwidth=0)
+        self.style.map('Dark.TCheckbutton',
+                      foreground=[('disabled', '#666666'),
+                                  ('pressed', UI_COLORS['fg']),
+                                  ('active', UI_COLORS['fg']),
+                                  ('!disabled', UI_COLORS['fg'])],
+                      background=[('disabled', UI_COLORS['bg']),
+                                  ('pressed', UI_COLORS['bg']),
+                                  ('active', UI_COLORS['bg']),
+                                  ('!disabled', UI_COLORS['bg'])])
+
+        # Configure radiobutton style (same as checkbutton to fix outline issue)
+        self.style.configure('Dark.TRadiobutton',
+                            background=UI_COLORS['bg'],
+                            foreground=UI_COLORS['fg'],
+                            relief='flat',
+                            borderwidth=0)
+        self.style.map('Dark.TRadiobutton',
+                      foreground=[('disabled', '#666666'),
+                                  ('pressed', UI_COLORS['fg']),
+                                  ('active', UI_COLORS['fg']),
+                                  ('!disabled', UI_COLORS['fg'])],
+                      background=[('disabled', UI_COLORS['bg']),
+                                  ('pressed', UI_COLORS['bg']),
+                                  ('active', UI_COLORS['bg']),
+                                  ('!disabled', UI_COLORS['bg'])])
+
         self.style.configure('Dark.TSpinbox',
                             fieldbackground=UI_COLORS['entry_bg'],
                             background=UI_COLORS['entry_bg'],
@@ -790,6 +820,14 @@ class EnergyPlusGUI:
         self.current_idf_files = config['idf_files']
         self.current_output_mode = config.get('output_mode', 'Default')
         self.current_output_files = config.get('output_files', [])
+
+        # Initialize IDF manager with EnergyPlus path (reads IDD schema)
+        from eP_IDF import initialize_idf_manager
+        try:
+            initialize_idf_manager(config['eplus_path'])
+            print(f"Initialized IDF manager for EnergyPlus at {config['eplus_path']}")
+        except Exception as e:
+            print(f"Warning: Could not initialize IDF manager: {e}")
 
         # Backup OutputControl:Files for each IDF BEFORE starting simulations
         from eP_U import backup_output_controls

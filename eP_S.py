@@ -64,6 +64,13 @@ def run_energyplus_simulation(idf_file, weather_file, eplus_dir, update_queue, c
     update_queue.put(("INFO", f"Starting simulation for {idf_basename}"))
     update_queue.put(("UPDATE", idf_name, {'status': 'Initializing'}))
 
+    # Initialize IDF manager in worker process (each worker has separate memory)
+    from eP_IDF import initialize_idf_manager
+    try:
+        initialize_idf_manager(eplus_dir)
+    except Exception as e:
+        update_queue.put(("INFO", f"Warning: Could not initialize IDF manager: {e}"))
+
     # Step 1: Backup original OutputControl:Files state
     had_controls, original_text = backup_output_controls(idf_file)
 
