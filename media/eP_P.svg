@@ -1,0 +1,93 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Define clipping paths for rectangles -->
+    <clipPath id="leftRect">
+      <rect x="4" y="6" width="18" height="20"/>
+    </clipPath>
+    <clipPath id="rightRect">
+      <rect x="10" y="6" width="18" height="20"/>
+    </clipPath>
+    <clipPath id="intersection">
+      <rect x="10" y="6" width="12" height="20"/>
+    </clipPath>
+    
+    <!-- Gradient for intersection - yellow to blue transition -->
+    <linearGradient id="yellowToBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#32CD32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="32" height="32" fill="#f5f5f5"/>
+  
+  <!-- Left rectangle (Yellow) - lines get thicker from top to bottom -->
+  <g clip-path="url(#leftRect)">
+    <line x1="4" y1="7" x2="22" y2="7" stroke="#FFD700" stroke-width="0.1"/>
+    <line x1="4" y1="8" x2="22" y2="8" stroke="#FFD700" stroke-width="0.15"/>
+    <line x1="4" y1="9" x2="22" y2="9" stroke="#FFD700" stroke-width="0.2"/>
+    <line x1="4" y1="10" x2="22" y2="10" stroke="#FFD700" stroke-width="0.25"/>
+    <line x1="4" y1="11" x2="22" y2="11" stroke="#FFD700" stroke-width="0.3"/>
+    <line x1="4" y1="12" x2="22" y2="12" stroke="#FFD700" stroke-width="0.35"/>
+    <line x1="4" y1="13" x2="22" y2="13" stroke="#FFD700" stroke-width="0.4"/>
+    <line x1="4" y1="14" x2="22" y2="14" stroke="#FFD700" stroke-width="0.45"/>
+    <line x1="4" y1="15" x2="22" y2="15" stroke="#FFD700" stroke-width="0.5"/>
+    <line x1="4" y1="16" x2="22" y2="16" stroke="#FFD700" stroke-width="0.55"/>
+    <line x1="4" y1="17" x2="22" y2="17" stroke="#FFD700" stroke-width="0.6"/>
+    <line x1="4" y1="18" x2="22" y2="18" stroke="#FFD700" stroke-width="0.65"/>
+    <line x1="4" y1="19" x2="22" y2="19" stroke="#FFD700" stroke-width="0.7"/>
+    <line x1="4" y1="20" x2="22" y2="20" stroke="#FFD700" stroke-width="0.75"/>
+    <line x1="4" y1="21" x2="22" y2="21" stroke="#FFD700" stroke-width="0.8"/>
+    <line x1="4" y1="22" x2="22" y2="22" stroke="#FFD700" stroke-width="0.85"/>
+    <line x1="4" y1="23" x2="22" y2="23" stroke="#FFD700" stroke-width="0.9"/>
+    <line x1="4" y1="24" x2="22" y2="24" stroke="#FFD700" stroke-width="0.95"/>
+    <line x1="4" y1="25" x2="22" y2="25" stroke="#FFD700" stroke-width="1.0"/>
+  </g>
+  
+  <!-- Right rectangle (Blue) - lines get thicker from bottom to top -->
+  <g clip-path="url(#rightRect)">
+    <line x1="10" y1="7" x2="28" y2="7" stroke="#0066FF" stroke-width="1.0"/>
+    <line x1="10" y1="8" x2="28" y2="8" stroke="#0066FF" stroke-width="0.95"/>
+    <line x1="10" y1="9" x2="28" y2="9" stroke="#0066FF" stroke-width="0.9"/>
+    <line x1="10" y1="10" x2="28" y2="10" stroke="#0066FF" stroke-width="0.85"/>
+    <line x1="10" y1="11" x2="28" y2="11" stroke="#0066FF" stroke-width="0.8"/>
+    <line x1="10" y1="12" x2="28" y2="12" stroke="#0066FF" stroke-width="0.75"/>
+    <line x1="10" y1="13" x2="28" y2="13" stroke="#0066FF" stroke-width="0.7"/>
+    <line x1="10" y1="14" x2="28" y2="14" stroke="#0066FF" stroke-width="0.65"/>
+    <line x1="10" y1="15" x2="28" y2="15" stroke="#0066FF" stroke-width="0.6"/>
+    <line x1="10" y1="16" x2="28" y2="16" stroke="#0066FF" stroke-width="0.55"/>
+    <line x1="10" y1="17" x2="28" y2="17" stroke="#0066FF" stroke-width="0.5"/>
+    <line x1="10" y1="18" x2="28" y2="18" stroke="#0066FF" stroke-width="0.45"/>
+    <line x1="10" y1="19" x2="28" y2="19" stroke="#0066FF" stroke-width="0.4"/>
+    <line x1="10" y1="20" x2="28" y2="20" stroke="#0066FF" stroke-width="0.35"/>
+    <line x1="10" y1="21" x2="28" y2="21" stroke="#0066FF" stroke-width="0.3"/>
+    <line x1="10" y1="22" x2="28" y2="22" stroke="#0066FF" stroke-width="0.25"/>
+    <line x1="10" y1="23" x2="28" y2="23" stroke="#0066FF" stroke-width="0.2"/>
+    <line x1="10" y1="24" x2="28" y2="24" stroke="#0066FF" stroke-width="0.15"/>
+    <line x1="10" y1="25" x2="28" y2="25" stroke="#0066FF" stroke-width="0.1"/>
+  </g>
+  
+  <!-- Intersection area (Yellow to Blue gradient) - blend of both gradients -->
+  <g clip-path="url(#intersection)">
+    <line x1="10" y1="7" x2="22" y2="7" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="8" x2="22" y2="8" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="9" x2="22" y2="9" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="10" x2="22" y2="10" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="11" x2="22" y2="11" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="12" x2="22" y2="12" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="13" x2="22" y2="13" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="14" x2="22" y2="14" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="15" x2="22" y2="15" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="16" x2="22" y2="16" stroke="url(#yellowToBlue)" stroke-width="0.55"/>
+    <line x1="10" y1="17" x2="22" y2="17" stroke="url(#yellowToBlue)" stroke-width="0.5"/>
+    <line x1="10" y1="18" x2="22" y2="18" stroke="url(#yellowToBlue)" stroke-width="0.45"/>
+    <line x1="10" y1="19" x2="22" y2="19" stroke="url(#yellowToBlue)" stroke-width="0.4"/>
+    <line x1="10" y1="20" x2="22" y2="20" stroke="url(#yellowToBlue)" stroke-width="0.35"/>
+    <line x1="10" y1="21" x2="22" y2="21" stroke="url(#yellowToBlue)" stroke-width="0.3"/>
+    <line x1="10" y1="22" x2="22" y2="22" stroke="url(#yellowToBlue)" stroke-width="0.25"/>
+    <line x1="10" y1="23" x2="22" y2="23" stroke="url(#yellowToBlue)" stroke-width="0.2"/>
+    <line x1="10" y1="24" x2="22" y2="24" stroke="url(#yellowToBlue)" stroke-width="0.15"/>
+    <line x1="10" y1="25" x2="22" y2="25" stroke="url(#yellowToBlue)" stroke-width="0.1"/>
+  </g>
+</svg>
