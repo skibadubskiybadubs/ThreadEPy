@@ -1,15 +1,23 @@
 # ThreadEPy
 ## Embarrassingly Parallel EnergyPlus Python Simulator
 
-A Python utility for massive launch of EnergyPlus simulations on multiple threads with real-time monitoring.
+A Python utility for running multiple EnergyPlus simulations concurrently with real-time monitoring and progress tracking.
 
 ## Overview
 
-This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a GUI and a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
+ThreadEPy automates the execution of multiple EnergyPlus simulations in parallel, efficiently utilizing all available CPU cores. The tool features both a graphical interface and a terminal-based UI to monitor progress, resource usage, and simulation status in real-time.
 
-![GUI](media/preview.gif)
+### Interactive GUI Preview
 
-![EnergyPlus Parallel Simulations](media/img.png)
+<div align="center">
+<img src="media/preview.gif" alt="ThreadEPy GUI in action" width="500"/>
+</div>
+
+### Simulation Dashboard
+
+<div align="center">
+<img src="media/img.png" alt="EnergyPlus parallel simulations dashboard" width="900"/>
+</div>
 
 ## Features
 
@@ -20,6 +28,9 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 - **CSV Reporting**: Generates a detailed CSV report of all simulation runs
 - **Resource Management**: Monitors and displays CPU and memory usage for each simulation
 
+<div align="center">
+<img src="media/output_settings.png" alt="Output_Settings" width="500"/>
+</div>
 
 ## Installation
 
