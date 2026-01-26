@@ -7,9 +7,9 @@ A Python utility for massive launch of EnergyPlus simulations on multiple thread
 
 This tool automates the process of running multiple EnergyPlus simulations concurrently, efficiently utilizing available CPU cores. It provides a GUI and a rich terminal UI to monitor progress, resource usage, and simulation status in real-time.
 
-![GUI](img2.png)
+![GUI](media/preview.gif)
 
-![EnergyPlus Parallel Simulations](img.png)
+![EnergyPlus Parallel Simulations](media/img.png)
 
 ## Features
 
@@ -20,15 +20,13 @@ This tool automates the process of running multiple EnergyPlus simulations concu
 - **CSV Reporting**: Generates a detailed CSV report of all simulation runs
 - **Resource Management**: Monitors and displays CPU and memory usage for each simulation
 
-## Showcase
-![Showcase](eP_P-showcase.gif)
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.8 or higher
-- EnergyPlus 23.2.0 or higher (must be installed separately)
+- Tested on EnergyPlus 23.2.0 (must be installed separately)
 
 ### Setup
 
